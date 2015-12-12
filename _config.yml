@@ -3,11 +3,13 @@
 # ----------------------- #
 
 url: http://bigbear2017.github.io
-title: My Octopress Blog
-subtitle: A blogging framework for hackers.
-author: Your Name
+title: To Be Your Salt
+subtitle: To Be Your Salt, To Be Your Light
+author: Cao Nannan
 simple_search: https://www.google.com/search
-description:
+description: 我是一个基督徒，喜欢机器学习，Linux, 编程方面的知识。目前从事点击率预估，
+        文字链匹配广告，以及想关的工作。
+        生活中，我喜欢上帝，喜欢耶稣基督，也喜欢读圣经。
 
 # Default date format is "ordinal" (resulting in "July 22nd 2007")
 # You can customize the format as defined in
@@ -19,7 +21,7 @@ date_format: "ordinal"
 subscribe_rss: /atom.xml
 subscribe_email:
 # RSS feeds can list your email address if you like
-email:
+email: sei_michael@126.com
 
 # ----------------------- #
 #    Jekyll & Plugins     #

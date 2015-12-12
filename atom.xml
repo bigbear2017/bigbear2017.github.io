@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
+  <title><![CDATA[To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2015-12-12T23:08:37+08:00</updated>
+  <updated>2015-12-12T23:20:03+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
-    
+    <name><![CDATA[Cao Nannan]]></name>
+    <email><![CDATA[sei_michael@126.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 

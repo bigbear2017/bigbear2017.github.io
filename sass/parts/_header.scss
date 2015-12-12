@@ -1,0 +1,51 @@
+$header-height: 30px;
+
+#header{
+	text-align: left;
+	padding: 10px 0 7px 0;
+	background-color: #584b4f;
+	color: #efeae1;
+	font-size: 14px;
+	height: 30px;
+
+	line-height: normal;
+	margin-bottom:70px;
+	@media screen and (max-width: 620px){
+		height: auto;
+		position: relative;
+		margin-bottom: 10px;
+	}
+	a{
+		color: $color-main;
+		@include transition(color 0.3s);
+		&:hover{
+			color: $color-link;
+			border-bottom:none;
+		}
+	}
+	h1{
+		margin: 0;
+		font-weight: bold;
+		font-size: 22px;
+		display: inline-block;
+		@media screen and (max-width: 620px){
+			font-size: 20px;
+		}
+	}
+	ul li {
+		display: inline-block;
+	}
+	ul a {
+		color: #efeae1;
+	}
+	ul a:hover {
+		color: #81c08b;
+		text-decoration: none;
+	}
+	ul a.is-selected {
+		color: #a29f99;
+	}
+	ul .navigation {
+		display: inline-block;
+	}
+}

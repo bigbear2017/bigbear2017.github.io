@@ -4,7 +4,7 @@
   <title><![CDATA[Category: tools | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/tools/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2015-12-19T19:16:55+08:00</updated>
+  <updated>2015-12-19T19:38:50+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -12,6 +12,103 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Find 学习笔记]]></title>
+    <link href="http://bigbear2017.github.io/blog/2015/12/19/find-xue-xi-bi-ji/"/>
+    <updated>2015-12-19T19:30:56+08:00</updated>
+    <id>http://bigbear2017.github.io/blog/2015/12/19/find-xue-xi-bi-ji</id>
+    <content type="html"><![CDATA[<h3>1. 一个简单的find命令，找到当前目录下所有的java文件</h3>
+
+<pre><code>find . -name '*.java'
+find . -name '*.java' -print 
+</code></pre>
+
+<p>上面两个命令是一样的</p>
+
+<h3>2. find 命令的基本格式:</h3>
+
+<pre><code>find [-H | -L | -P] [-EXdsx] [-f path] path ... [expression]
+</code></pre>
+
+<p>其中，E 是使用extended regular expression, d使用depth first search</p>
+
+<h3>3. find 使用多个文件夹</h3>
+
+<pre><code>find dir1 dir2 dir3 -name '*.java' -print
+</code></pre>
+
+<h3>4. 删除找到的文件或者是文件夹</h3>
+
+<pre><code>find . -name '*.tmp'
+find . -name '*.tmp' -delete
+</code></pre>
+
+<p>这个命令是很强大的，不要轻易使用，在使用之前先确认找到的文件都是自己想删除的</p>
+
+<h3>5. 找到深度相对于目前目录是5的所有java文件</h3>
+
+<pre><code>find . -name '*.java' -depth 5
+</code></pre>
+
+<h3>6. 寻找深度最多为5层的所有文件</h3>
+
+<pre><code>find . -name '*.java' -maxdepth 5
+</code></pre>
+
+<h3>7. 找到所有不是java的文件</h3>
+
+<pre><code>find . -not \( -name '*.java' \) -maxdepth 5
+</code></pre>
+
+<p>还可以使用 !, -or, -and, -false, -true</p>
+
+<h3>8. 使用-exec， 执行其他的命令</h3>
+
+<pre><code>find . -name '*.java' -maxdepth 5 -exec ls -lh {} ";"
+find . -name '*.java' -maxdepth 5 -exec ls -lh {} \;
+</code></pre>
+
+<p>\ 和 &ldquo;&rdquo; 的目的是问了让;不被shell吃掉，而变成一个string成为参数的一部分</p>
+
+<h3>9.  找到所有类型的文件</h3>
+
+<pre><code>find . -type f 普通文件
+find . -type d 目录
+</code></pre>
+
+<p>s socket, p FIFO, l symbolic link, c character special, b block special</p>
+
+<h3>10. 特别用户名的文件</h3>
+
+<pre><code>find . -uid / find . -user
+</code></pre>
+
+<h3>11. 找到当前文件夹中大于1M的文件</h3>
+
+<pre><code>find . -size +1M
+find . -size n[ckMGTP] 
+</code></pre>
+
+<p>&ldquo;+&rdquo; 表示大于, &ldquo;-&rdquo; 表示小于</p>
+
+<h3>12. 一些关于时间的命令</h3>
+
+<pre><code>find . -atime n[smhdw] -ctime n[smhdw] -mtime n[smhdw]
+</code></pre>
+
+<ul>
+<li>s       second</li>
+<li>m       minute (60 seconds)</li>
+<li>h       hour (60 minutes)</li>
+<li>d       day (24 hours)</li>
+<li>w       week (7 days)</li>
+</ul>
+
+
+<p>好吧暂时先写这么多，很简单的命令，确实很好用。我用的mac系统，有时可能会和Linux有点差别。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[如何用 Thrift 写一个服务]]></title>

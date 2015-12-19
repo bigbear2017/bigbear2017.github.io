@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 算法 | To Be Your Salt]]></title>
+  <link href="http://bigbear2017.github.io/blog/categories/suan-fa/atom.xml" rel="self"/>
+  <link href="http://bigbear2017.github.io/"/>
+  <updated>2015-12-19T19:16:55+08:00</updated>
+  <id>http://bigbear2017.github.io/</id>
+  <author>
+    <name><![CDATA[Cao Nannan]]></name>
+    <email><![CDATA[sei_michael@126.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Newton Method]]></title>
+    <link href="http://bigbear2017.github.io/blog/2014/09/12/newton-method/"/>
+    <updated>2014-09-12T21:49:55+08:00</updated>
+    <id>http://bigbear2017.github.io/blog/2014/09/12/newton-method</id>
+    <content type="html"><![CDATA[<p>本文主要介绍Newton Method，BFGS, LBFGS 算法，最重要的是算法推导的过程，以及这三个算法的比较。</p>
+
+<h2>Newton Method</h2>
+
+<p>假设$ y = f(x) $，为了求方程$ f(x) = 0$的解，我们可以用下面迭代的方式：
+$$ x<em>{n+1} = x_n - \frac{ f(x_n) } { f^{\prime} (x_n) } $$
+比如$ f(x) = x^{2} - 5 $，我们可以这么来求：
+$$ x_1 = 5, f(5) = 20, f^{\prime}(5) = 10, x_2 = 5 - 20 / 10 = 3 $$
+$$x_2 = 3, f(3) = 4, f^{\prime}(3) = 6, x_3 = 3 - 4/6 = 7/3 $$
+$$x_3 = 7/3, f(7/3) = 4/9, f^{\prime}(7/3) = 14/3, x_4 = 7/3 - 2/21 = 47/21 $$
+这样$ 47/21 $ 已经非常接近5的平方根了。为什么可以这么计算呢？证明如下：
+根据泰勒展开式，$ y = f(x) $ 在 $x_n$处的展开为：
+$$ y = f^{\prime}(x_n) ( x</em>{n+1} - x_n ) + f(x_n) $$
+如果$ y = 0 $, 那么可得如下结果：
+$$ x<em>{n+1} = x_n - f(x_n) / f^{\prime}(x_n) $$
+在许多机器学习的算法中，我们经常可能碰到的是另外一种形式，比如我们想最大化log likelihood函数。
+这个时候，我们会对函数先求一个导，导数$f^{\prime}(x) = 0$的地方一般就是极值点。因此这个时候，我们想求的是
+$ f^{\prime}(x) = 0 $，而不是$ f(x) = 0 $。如果求$ f^{\prime}(x) = 0 $，则方程的解如下：
+$$ x</em>{n+1} = x_n - \frac{f^{\prime}(x)}{f^{\prime \prime}(x)} $$
+但是因为这个方法要求函数的二阶导数，就像在logistic regression中说的一样。求出来的Hessian Matrix实在太大，
+求逆也非常的麻烦。因此就有人想到了更为简单的算法，LBFGS就是其中一个比较好的方法，我们先从BFGS算法说起。</p>
+
+<h2>BFGS</h2>
+
+<p>BFGS算法是由Broyden, Fletcher, Goldfarb 和 Shanno四个人共同提出的。这里我们把他们的名字列出来，纪念一下。:)
+由最简单的Line Search的方法，我们知道对于求方程$ f(x) = 0 $的解，我们可以进行如下迭代：
+$$ x<em>{k+1} = x_k + \alpha_k \rho_k $$
+其中 $\alpha_k$ 为步长，$\rho_k$为迭代方向。根据泰勒展开，我们可以把$f(x)$写成下面格式：
+$$ f(x</em>{k+1}) = f(x_k) + f^{\prime}(x_k)(x<em>{k+1} - x_k) + \frac{1}{2} (x</em>{k+1} - x_k)^{T} f^{\prime \prime}(x_k) ( x<em>{k+1} - x_k ) $$
+上面的函数，也可以写成$ \rho $ 的函数，如下：
+$$ m_k(\rho) = f_k + f^{\prime T}</em>k \rho + \frac{1}{2} \rho^{T} B_k \rho $$
+其中$f_k$为$f(x_k)$, $f^{\prime}<em>k$为$f(x)$在$x_k$处的导数。根据上面的式子，当$\rho = 0$的时候，
+$$ m_k(0) =  f_k, m^{\prime}</em>k (0) = f^{\prime T}<em>k $$
+因此在任何一点$x_k$，$f(x_k)$都可以写成$m_k$的形式，方程的曲线也应该是相同的。根据上面的定义，我们可以得到方程在
+$x</em>{k+1}$处，$m<em>{k+1}$的表达式为:
+$$ m</em>{k+1}(\rho) = f<em>{k+1} + f^{\prime T}</em>{k+1} \rho + \frac{1}{2} \rho^{T} B<em>{k+1} \rho $$
+根据这个表达式，$m</em>{k+1}$ 这个表达式在$x_k$处的导数为:
+$$ f^{\prime}(x_k) = m^{\prime}<em>{k+1}(-\alpha_k \rho_k) = f^{\prime T}</em>{k+1} - \alpha_k B<em>{k+1} \rho_k $$
+所以得到：
+$$ B</em>{k+1} \alpha_k \rho_k = f^{\prime}<em>{k+1} - f^{\prime}</em>k $$
+为了简化，定义如下:
+$$ s_k = x<em>{k+1} - x_k = \alpha_k \rho_k, y</em>{k} = f^{\prime}<em>{k+1} - f^{\prime}</em>k $$
+所以上面的结果可以写成:
+$$ B<em>{k+1} s_k = y_k $$
+假设$ H</em>{k+1} $为$B<em>{k+1}$的逆矩阵，那么我们可以得到:
+$$ H</em>{k+1} y_k = s_k $$
+利用$H_k$，$H<em>{k+1}$可以通过下面的方式获得:
+$$ \min_H || H - H</em>{k+1} || $$
+subject to $ H = H^{T}, Hy_k = s_k $.这样我们可以得到$H<em>{k+1}$的解为：
+$$ H</em>{k+1} = (I - p_k s_k y^{T}<em>k)H_k(I-p_k y_k s^{T}</em>k) + p_k s_k s^{T}<em>k$$
+其中$p_k = \frac{1}{y^{T}</em>k s_k}$.到这里BFGS的解法就算明白了。相对于Newton Method，BFGS方法不用
+计算Hessian Matrix的逆矩阵。但是它仍然要计算一个matrix，所以内存的占用仍然是一样的。具体算法如下：
+<code>
+while || f^{\prime}_k|| &gt; \epsilon
+          compute search direction
+                  p_k = -H_k f^{\prime}_k
+          x_{k+1} = x_k + \alpha_k p_k where \alpha_k is computed from a line search
+              procedure to satisfy the Wolfe conditions.
+          Define s_k = x_{k+1} - x_k and y_k = f^{\prime}_{k+1} - f^{\prime}_k
+          Compute H_{k+1} with above formula.
+          k = k + 1
+end( while )
+</code></p>
+
+<h3>LBFGS</h3>
+
+<p>根据上面的推导，BFGS算法可以写成下面的格式:
+$$ x<em>{k+1} = x</em>{k} - \alpha_k H_k f^{\prime}<em>k(x) $$
+其中$\alpha_k$为步长，$H_k$可以写成下面的格式:
+$$ H</em>{k+1} = V^{T}<em>k H</em>{k} V_k + p_k s_k s^{T}<em>k $$
+其中$p_k = \frac{1}{y^{T}</em>k s_k}$, $V_k = I - p_k y_k s^{T}<em>k $, and $s_k = x</em>{k+1} - x_k$,$y_k = f^{\prime}<em>{k+1} - f^{\prime}</em>{k}$.
+由于计算$H<em>{k+1}$相当的麻烦，我们可以存储$m$个最近的$y_i, s_i$，然后来近似当前的$H</em>{k+1}$. 根据$H_{k+1}$的定义，我们不难发现这是一个递归的定义。在所有计算的过程中，其实就只有$H_0$这么一个矩阵，其他的全部是向量。如果我们使用一个对角矩阵来近似$H_0$，那么所有的计算都是可以用向量来表示。这个也是为什么它叫limited memory BFGS。
+<code>
+calculate the new direction \rho_k
+q = f^{\prime}(x_k)
+for i = k-1 ... k-m
+  \alpha_i = p_i s^T_i q
+  q = q - \alpha_i y_i
+end for
+r = H_0 q
+for i = k-m ... k-1
+  \beta = p_i y^T_i r
+  r = r + s_i(\alpha_i - \beta)
+end for
+return r which is H_{k}*f^{\prime}_k
+</code></p>
+
+<h2>L-BFGS algorithm</h2>
+
+<pre><code>choose starting point x_0, integer m &gt; 0;
+k = 0;
+repeat
+      Choose H_0
+      Compute \rho_k = - H_{k}*f^{\prime}_k
+      Compute x_{k+1} = x+k + \alpha_k \rho_k, where \alpha_k is the step length
+          which statisfy the Wolfe conditions.
+      if k &gt; m
+              Discard the vector pair{ s_{k-m}, y_{k-m} } from storage.
+      Compute and save s_k = x_{k+1} - x_{k}, y = f^{\prime}_{k+1} - f^{\prime}_k
+      k = k+1
+</code></pre>
+
+<p>参考资料
+<a href="http://en.wikipedia.org/wiki/Newton%27s_method">http://en.wikipedia.org/wiki/Newton%27s_method</a>
+Numerical Optimization, Chapter 6, 7.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Factorization Meets the Neighborhood I]]></title>
+    <link href="http://bigbear2017.github.io/blog/2014/09/08/factorization-meets-the-neighborhood-i/"/>
+    <updated>2014-09-08T21:54:12+08:00</updated>
+    <id>http://bigbear2017.github.io/blog/2014/09/08/factorization-meets-the-neighborhood-i</id>
+    <content type="html"><![CDATA[<!--more本文主要介绍Factorization Meets the Neighborhood中的算法一:baseline method，并简单地进行实现。我会尝试把几个算法都实现一下，然后分几个文章进行介绍。 Baseline estimates 假设一个user对一个item的评价为-->
+
+
+<p>本文主要介绍Factorization Meets the Neighborhood中的算法一:
+baseline method，并简单地进行实现。我会尝试把几个算法都实现
+一下，然后分几个文章进行介绍。</p>
+
+<h2>Baseline estimates</h2>
+
+<p>假设一个user对一个item的评价为$r_{ui}$, baseline estimate用$b_{ui}$,
+表示，那么baseline estimate可以理解如下:</p>
+
+<p>$$ b_{ui} = \mu + b_u + b_i $$</p>
+
+<p>其中$b_u$表示user评分的偏差，$b_i$表示item被评分的偏差。</p>
+
+<p>比如我们想预测用户joe对Titanic的评分。假设总体上的平均分为3.7分，而
+Titanic比其他电影要好，所以它总体上比平均分高0.5分。另外用户joe是一个
+相当挑剔的用户，喜欢给低分，总体上比平均分低0.3分。因此，预测的值就是
+3.7 - 0.3 + 0.5 = 3.9分。
+因此我们就可以解下面的最小平方和问题：</p>
+
+<p>$$ \displaystyle \min_b \displaystyle \sum_{(u,i) \in K} ( r_{ui} - \mu - b_u - b_i )^{2} + \lambda_1 ( \displaystyle \sum_u b^{2}_u  + \displaystyle \sum_{i} b^{2}_i ) $$</p>
+
+<p>Linear Regression
+如果看到上面的公式，不得不让我们想到线性回归中的Ridge。
+Ridge的定义和上面很相似，定义如下:</p>
+
+<p>$$ \displaystyle \min_{\beta} \displaystyle \sum_{i=1}^{N} ( y_i - \beta x_i )^{2} + \lambda_2 \sum \beta^{2}_j$$</p>
+
+<p>和上面的方程比较，不难看出这两个方程非常的相似。假设所有用户的 $b_u$放在一起是一个向量$B_u$，另外所有item的$b_i$放在一起是一个向量$B_i$。我们只要把$\beta$看成$B_u$和$B_i$两个向量的连接。$y_i$看成是$r_{ui} - \mu$。而每个$x_i$则有两个1，下表为$b_u$和$b_i$在向量中的下标。
+Ridge 的解如下：</p>
+
+<p>$$ \beta = (X^{T}X + \lambda I )^{-1} X^{T} y $$</p>
+
+<p>这样所有的$b_u$和$b_i$就解出来了。</p>
+
+<h2>Statistical Method</h2>
+
+<p>有人提出说可以根据当前值，直接统计出$b_u$和$b_i$:</p>
+
+<p>$$ b_i = \frac{ \sum_{u \in R(i)} ( r_{ui} - \mu ) } {\lambda_2 + |R(i)|} $$</p>
+
+<p>$$ b_u = \frac{ \sum_{i \in R(u)} ( r_{ui} - \mu - b_i )   } {\lambda_3 + |R(u)|} $$</p>
+
+<p>R(u)为用户u所有给出的评分，R(i)为项目i所有得到的评分。证明如下：
+假设 $ y_{ui} = r_{ui} - \mu $，所以上面那个最小平方和的方程对$b_u$求偏导，可以得到：</p>
+
+<p>$$ F^{1} (b_u) =  \sum_{(u,i) \in K} 2( y_{ui} - b_u - b_i ) * (-1) + 2 \lambda_1 * b_u $$</p>
+
+<p>如果想方程值最小，上面的偏导应该等于0。所以可以得到：</p>
+
+<p>$$ \sum_{i \in R(u)} y_{ui}  - |R(u)| * b_u - \sum_{i \in R(u)} b_i =  \lambda_1 * b_u $$</p>
+
+<p>$$ b_u = \frac{ \sum_{i \in R(u)} ( y_{ui} - b_i ) } {\lambda_1 + |R(u)|} $$</p>
+
+<p>同理，$b_i$也可以得到上面的式子。刚刚开始的时候，可以假设所有的$b_u$都为0, 然后求出$b_i$, 然后循环迭代。
+基本上，迭代几轮就能达到上面最优的效果了。所以我们现在知道，别人提出的那个式子，只是一个开始步骤。如果
+想得到理想的效果，可以稍微增加一些迭代次数。
+具体实现
+<code>
+import numpy as np
+'''
+In this script, we will test the baseline method in [1].
+We assume there are 100 users and 100 movies. Each user
+will rate 30 movies. We will get a model to estimate how
+much ratings a user will give for a movie
+'''
+seeds = np.random.normal( 3.7, 3.0, 100 )
+ratings = []
+for seed in seeds:
+  ratings.append( np.random.normal( seed, 1.0, 100 ) )
+ratings = np.vstack( ratings )
+ratings[ ratings &amp;lt; 0.01 ] = 0.01
+unknown_index = np.random.random_integers( 0, 100, (100,100) )
+non_zeros = unknown_index &amp;lt;= 30
+rate_num = np.sum( non_zeros )
+x = np.zeros( ( rate_num, 200 ) )
+y = np.zeros( rate_num )
+lenx, leny = non_zeros.shape
+count = 0
+for i in range(lenx):
+  for j in range( leny ):
+    if non_zeros[i,j] == True:
+      x[ count, i ] = 1
+      x[ count, i+j+1 ] = 1
+      y[ count ] = ratings[i, j]
+      count += 1
+mu = np.sum( y ) / rate_num
+y = y - mu
+xt = x.T
+xtx = xt.dot( x ) + np.identity(200) * 5
+xtx = np.linalg.inv( xtx )
+beta = xtx.dot( xt ).dot( y )
+'''
+calculate beta using statistical method
+according to this link:
+http://semocean.com/因式分解实现协同过滤-及源码实现/
+'''
+beta2 = np.zeros( 200 )
+for i in range( 100 ):
+  count = 0
+  for j in range( 100 ):
+    if non_zeros[i, j] == True:
+      beta2[i] += ratings[i,j] - mu
+      count += 1
+  beta2[ i ] /= ( count + 20 )
+for i in range( 100 ):
+  count = 0
+  for j in range( 100 ):
+    if non_zeros[ j, i ] == True:
+      beta2[ i+100 ] += ratings[ j, i ] - mu - beta2[j]
+      count += 1
+  beta2[ i+100 ] /= ( count + 30 )
+'''
+calculate the mse
+'''
+mse1, ase1 = 0, 0
+mse2, ase2 = 0, 0
+mse3, ase3 = 0, 0
+for i in range(lenx):
+  for j in range(leny):
+    if non_zeros[i,j] == False:
+      error = ratings[i, j] - mu - beta[i] - beta[i+j+1]
+      ase1 += np.abs( error )
+      mse1 += error * error
+      error2 = ratings[i, j] - mu
+      ase2 += np.abs( error2 )
+      mse2 += error2 * error2
+      error = ratings[i, j] - mu - beta2[i] - beta2[i+j+1]
+      ase3 += np.abs( error )
+      mse3 += error * error
+pre_num = 100 * 100 - rate_num
+mse1 = np.sqrt(mse1 / pre_num )
+mse2 = np.sqrt(mse2 / pre_num )
+mse3 = np.sqrt(mse3 / pre_num )
+ase1 = ase1 / pre_num
+ase2 = ase2 / pre_num
+ase3 = ase3 / pre_num
+print 'prediction number: ', pre_num, 'mse1: ', mse1, 'ase1: ', ase1
+print 'prediction number: ', pre_num, 'mse2: ', mse2, 'ase2: ', ase2
+print 'prediction number: ', pre_num, 'mse3: ', mse3, 'ase3: ', ase3
+</code>
+测试了一下，效果比平均数要好上不少。刚刚开始的时候，我直接用一个正态分布来生成数据，
+发现预测的竟然还不如平均数好。后来改变了数据生成的方法，baseline预测的看起来就正确了。</p>
+
+<p>Baseline</p>
+
+<ul>
+<li>prediction number:  6852</li>
+<li>mse1:  1.98610991138</li>
+<li>ase1:  1.60351615809</li>
+</ul>
+
+
+<p>平均数</p>
+
+<ul>
+<li>prediction number:  6852</li>
+<li>mse2:  3.00171330689</li>
+<li>ase2:  2.50388966193</li>
+</ul>
+
+
+<p>Statistical Baseline</p>
+
+<ul>
+<li>prediction number:  6852</li>
+<li>mse3:  1.99252697533</li>
+<li>ase3:  1.58618085221</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[LogisticRegression推导证明]]></title>
+    <link href="http://bigbear2017.github.io/blog/2014/06/22/logisticregressiontui-dao-zheng-ming/"/>
+    <updated>2014-06-22T21:43:48+08:00</updated>
+    <id>http://bigbear2017.github.io/blog/2014/06/22/logisticregressiontui-dao-zheng-ming</id>
+    <content type="html"><![CDATA[<p>这是我要复习和介绍的第一个机器学习算法，logistic regression，既可以用来作回归，
+也可以用来作分类。训练比线性回归复杂一点，但比SVM容易很多，可以说是学习机器学习
+入门的算法。以下是Logistic Regression模型的推导证明，主要参考的是
+Elements of statistical learning, data mining, inference and prediction。
+我会用几个系列讨论这个问题，以及相关的优化算法。</p>
+
+<h2>模型定义</h2>
+
+<p>暂且先讨论只有两种输出的情况, $ y = 0/1 $, 假设输入向量为$m$维, $ x \in R^{m} $。
+模型的定义如下：</p>
+
+<p>$$ \log \frac{ Pr(y = 1 \vert x ) } { Pr(y = 0 \vert x )} = \beta_0  + \beta $$</p>
+
+<p>由上面的式子可以得到：</p>
+
+<p>$$ \frac{Pr( y = 1 \vert x )} { Pr( y = 0 \vert x  ) } = \exp^{\beta_0 + \beta x } $$</p>
+
+<p>并且知道:</p>
+
+<p>$$ Pr( y = 1 \vert x ) + Pr( y = 0 \vert x ) = 1 $$</p>
+
+<p>把式子代到上面得到：</p>
+
+<p>$$ Pr(y = 1 \vert x ) = \frac{ \exp^{ \beta_0 + \beta x } } { 1+ \exp^{ \beta_0 + \beta x } } \
+Pr( y = 0 \vert x ) = \frac{ 1 } { 1+ \exp^{ \beta_0 + \beta x  } } $$</p>
+
+<h2>最大化Log-Likelihood</h2>
+
+<p>假设 $ p = Pr(y = 1 \vert x ) $ 并且 $ \beta x = \beta_0 + \beta x $, Log-Likelihood如下：</p>
+
+<p>$$ \ell( \beta ) = \Sigma_{ i = 1 }^{ N } {  y_i \log(p) + (1-y_i) \log(1-p)  } $$</p>
+
+<p>$$ = \Sigma_{i = 1}^{N} { y_i \log(p) + log(1-p) - y_i \log(1-p) } $$</p>
+
+<p>$$ = \Sigma_{i = 1}^{N} { y_i \beta^{T} x_i - \log ( 1 + \exp^{ \beta x_i} ) } $$
+上面这个函数是什么意思呢？先从似然函数和最大似然估计说起。
+似然函数的意思是，如果变量$X^{n}=(x_1, x_2, &hellip; , x_n )$的联合分布，服从概率密度函数
+$p(x_1, x_2, &hellip; , x_n, \theta )$，那么</p>
+
+<p>$$ L(\theta) = p( x_1, x_2, &hellip; , x_n, \theta ) $$</p>
+
+<p>因此我们可以把数据中的$x$和$y$，放在一起看成一个$m+1$维的变量，如果$y=1$，根据上面的公式
+$L(\theta) = p( x, 1, \theta )$，也就是预测的值为1的概率。如果$y=0$，根据上面的公式，
+$L(\theta) = p( x, 0, \theta )$，就是预测的值为0的概率。因此把所有样子的似然估计加起来，
+就得到了上面的式子。这个最大似然估计法，是统计中最常用的方法之一。</p>
+
+<p>为了最大化上面的函数，我们可以使用Newton Method来进行迭代，
+初始化一个$\beta$，然后不断地更新$\beta$，最终得到最优解，
+我会在下一篇里面介绍Newton Method，以及相关简单的优化算法。
+根据Newton Method，我们需要计算方程的一阶导数$F^{1}(\beta)$和
+二阶导数$F^{2}(\beta)$，一阶导数计算还是比较简单的，只要会一般
+的求导公式，应该都可以得到下面的结果：</p>
+
+<p>$$ F^{1}(\beta) = \Sigma_{i = 1}^{N} { y_i x_i - \frac{1}{ ( 1+\exp^{\beta x_i} ) } \exp^{ \beta x_i } x_i }$$</p>
+
+<p>$$ = \Sigma_{i = 1}^{N} x_i ( y_i - p_i ) $$</p>
+
+<p>这个只要会求导数，应该这个公式都可以求出来。先来看看这个结果，
+首先这个结果是一个向量，在迭代的过程中，当$\beta$为某一个值的时候，
+$ y_i $ 和 $ p_i $都是一个实数。而$ x_i $是$m$维的，因此这个结果是一个向量。
+这个也比较容易理解，对一个向量求导，结果也应该是一个向量。
+但要求二阶导数就会麻烦一点，因为一阶导数已经是一个向量了，再对向量进行求一阶导数，
+结果是一个$ N * N $的矩阵，这个矩阵叫Hessian Matrix。如果对这个方面有问题的话，
+可以在google里面搜索: derevative of vectors。有一个pdf文档详细的介绍了，
+如何去求向量的导数，可以看看理解一下。这里的推导还算简单，直接可以
+把$x_i$看成一个一维的变量，推导如下：</p>
+
+<p>$$ F^{2}(\beta) = F^{1} { \Sigma_{i=1}^{N} x_i ( y_i - \frac{\exp^{\beta x }}{(1 + \exp^{\beta x})} ) } $$</p>
+
+<p>$$ = F^{1} { \Sigma_{i=1}^{N} x_i ( y_i - \frac{1}{1 + \exp^{-\beta x } } ) } $$</p>
+
+<p>$$ = \Sigma_{i=1}^{N} - x_i x_i \frac{\exp^{-\beta x}}{(1 + \exp^{-\beta x })^{2} } $$</p>
+
+<p>$$ = \Sigma_{i=1}^{N} - x_i x_i p_i ( 1 - p_i ) $$</p>
+
+<p>再看看这个结果，$x_i$乘上$x_i$很显然是一个矩阵，而$p_i$和$1-p_i$都是常数。
+这样我们就得到了一个函数的二阶导数。
+然后就可以根据Newton Method来进行迭代了，迭代如下：</p>
+
+<p>$$ \beta^{new} = \beta^{old} - \frac{F^{1}(\beta) }{F^{2}(\beta) } $$</p>
+
+<p>因为$F^{2}(\beta)$是一个矩阵，除一个矩阵和除一个数是类似的，都是乘上它的$-1$次方，
+就是要算这个矩阵的逆矩阵。</p>
+
+<h2>矩阵形式</h2>
+
+<p>这样的话，按照这个方程我们就可以训练LR的模型了。如果使用矩阵计算的话，可以写成下面的样子，
+$ X $是输入矩阵，$Y$为标签向量，$P$为预测向量，$W$为对角线矩阵，值为 $ p_i ( 1-p_i ) $：</p>
+
+<p>$$ F^{1}(\beta) = X^{T} ( Y - P ), F^{2}(\beta) = - X^{T} W X  $$</p>
+
+<p>Newton Method的迭代为：</p>
+
+<p>$$ \beta^{new} = \beta^{old} + ( X^{T} W X )^{-1} X^{T} (Y - P ) $$</p>
+
+<h2>前进的方向</h2>
+
+<p>好，到此为止，logistic regression最简单的结果就有了。但是在实际的生活中，
+却很少有人用Newton method去解logistic regression。因为要计算Hessian Matrix，
+这个matrix太可怕了，如果是$m$维的输入，这个matrix就是$m*m$维的。
+像现在训练的模型，动不动就上百万维的，再多内存也不够啊。
+所以我们需要一些更好优化的方法，Conjugate gradient或者 LBFGS。
+另外有的时候，我们的输入不一定就是0/1，如果有更多的类，怎么办呢？这个以后慢慢讨论。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[如何使用MapReduce计算文本的tf-idf]]></title>
+    <link href="http://bigbear2017.github.io/blog/2014/06/13/ru-he-shi-yong-mapreduceji-suan-wen-ben-de-tf-idf/"/>
+    <updated>2014-06-13T17:26:18+08:00</updated>
+    <id>http://bigbear2017.github.io/blog/2014/06/13/ru-he-shi-yong-mapreduceji-suan-wen-ben-de-tf-idf</id>
+    <content type="html"><![CDATA[<p>本文介绍如何使用MapReduce进行文本的tf-idf计算。
+程序的输入是一个个的文本，类似下面的：</p>
+
+<p>doc1: w1, w2, w3</p>
+
+<p>doc2: w4, w5, w6</p>
+
+<p>输出为一个个的Vector，可以是Sparse的Vector，或者是Dense Vector,
+我们就假设使用Sparse的Vector，输出如下：</p>
+
+<p>doc1_id, 1:0.1, 2:0.1, 3:0.03</p>
+
+<p>doc2_id, 4:0.1, 5:0.1, 6:0.01</p>
+
+<h2>如何使用MapReduce进行计算呢？</h2>
+
+<p>对一个单词$w_i$, 在文档$D_j$中，tf-idf的计算公式如下：
+$$ tf_idf= \frac{ N(w_i) } { N( D_j ) } * \log \frac{ \vert D \vert } { \vert j: w_i \in D_j \vert + 1 } $$
+其中$N(w_i)$ 是$w_i$在$D_j$中的频率，$N(D_j)$是$D_j$中所有词的频率，也就是文本的长度，
+$|D|$为所有文本的个数，$| j: w_j \in D_j |$ 为包含$w_i$的文档个数。</p>
+
+<p>统计tf-idf需要两个MapReduce Job，一个job统计每个词的tf-idf，然后将每个文档中的词聚合到一起。
+<code>
+MapReduce1 Mapper Input:
+doc1: w1, w2, w3
+doc2: w4, w5, w6
+MapReduce1 Mapper Output:
+w1_index: (doc1_id, tf_w1, w1_index)
+</code>
+其中 doc1_id根据对文档名字进行hash得到，tf_w1根据doc1中w1出现的次数来计算，
+w1_index根据词典计算，context的counter统计文档数量|D|</p>
+
+<p>MapReduce1 Reducer Output:</p>
+
+<p>doc1_id: (w1_index, tf-idf )</p>
+
+<p>tf-idf根据tf, |D|，所有包含w1的文档的个数</p>
+
+<p>MapReduce2 Mapper: Identity Mapper</p>
+
+<p>MapReduce2 Reducer: 根据doc_id，将所有相同文档归并到一起，得到:</p>
+
+<p>doc1_id: w1_index:tf-idf, w2_index:tf-idf</p>
+
+<p>doc2_id: w4_index:tf-idf, w5_index:tf-idf</p>
+
+<p>还有另外一种方法是，先计算每个词的idf，然后再将idf做为distributed cache
+分发给每一个mapper，然后得到每个文本的tf-idf.</p>
+]]></content>
+  </entry>
+  
+</feed>

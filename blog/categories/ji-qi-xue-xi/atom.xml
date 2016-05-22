@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 机器学习 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/ji-qi-xue-xi/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-05-22T20:00:21+08:00</updated>
+  <updated>2016-05-22T20:18:51+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -12,6 +12,64 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[NeronNetwork算法介绍]]></title>
+    <link href="http://bigbear2017.github.io/blog/2015/06/22/neronnetworksuan-fa-jie-shao/"/>
+    <updated>2015-06-22T20:05:00+08:00</updated>
+    <id>http://bigbear2017.github.io/blog/2015/06/22/neronnetworksuan-fa-jie-shao</id>
+    <content type="html"><![CDATA[<p>最近深度学习实在太火了，火到各个公司都在搞实验室。但是深度学习的基础，还是从neron network，BP，这样的算法开始。
+就简单回顾一下最简单的NN吧。</p>
+
+<h3>1. 算法介绍</h3>
+
+<p>我们假设只有一层的隐藏层，并且大小为M，输入$X \in R^p$，输出$Y \in R^K$，输出$Y$属于$K$ classes。所以，我们可以得到下面的定义:</p>
+
+<p>$$ \begin{matrix}
+D_m = \rho ( \alpha_m0 + \alpha_m^T X ) , m = 1, 2, &hellip; M \\
+T_k = \beta_k0 + \beta_k^T D, k = 1, 2, &hellip; K \\
+f_k(X) = g_k( T ) , k = 1,2, &hellip; K
+\end{matrix}$$</p>
+
+<p>其中$D = (D_1, D_2, &hellip; , D_M)$, $\rho = \frac{1}{ 1 + \exp^{(-v)} }$是sigmod function, $g_k$可以是identity function，或者是softmax function $\frac{exp^{T_k}}{\sum_{l = 1}^{K} exp^{T_l}}$.</p>
+
+<h3>2. 求解</h3>
+
+<p>训练采用的back propagation的方式，就是先利用参数计算结果，然后根据结果计算梯度，根据梯度再优化参数。
+根据上面的定义，我们可以得到loss function $R(\alpha, \beta)$如下:</p>
+
+<p>$$
+R(\alpha, \beta) = \sum_{k = 1}^K \sum_{n = 1}^N ( y_{ik} - f_k( x_i ) ) ^2
+$$</p>
+
+<p>其中$N$是样本数, $K$是样本的class的数目. 所以对$\alpha, \beta$分别求偏导，我们可以得到:</p>
+
+<p>$$\begin{matrix}
+\frac{\partial R_i}{\partial \beta_{km} } = -2(y_{ik} - f_k( x_i ) ) g^{\prime}(T_k) D_{mi}   \\
+\frac{\partial R_i}{\partial \alpha_{mp}} =  -\sum_{k=1}^{K}2(y_{ik} - f_k( x_i ) ) g^{\prime}(T_k) \beta_{k}\rho^{\prime}(\alpha_m^T x_i) x_{ip}
+\end{matrix}
+$$</p>
+
+<p>根据上面的式子，我们就可以利用gradient descent的方式，来训练模型了.</p>
+
+<p>$$ \begin{matrix}
+\beta^{r+1}_{km} = \beta^{r}_{km}  - \gamma_r \frac{\partial R_i}{\partial \beta_{km} } \\
+\alpha^{r+1}_{mp} = \alpha^{r}_{mp}  - \gamma_r \frac{\partial R_i}{\partial \beta_{mp} }
+\end{matrix}$$</p>
+
+<h3>3. 向量化</h3>
+
+<p>上面的式子，实在看着太繁琐了，我们还是对其进行向量化，可能看着更简单，实现也更方便一些.</p>
+
+<h3>3. 注意点</h3>
+
+<h6>1. 输入的起始点，不可以全部是零。因为全部是零的话，就永远全部是零，无法训练。也不可以过大，结果会不太好。最好的是随机靠近0的数。</h6>
+
+<h6>2. 隐藏层多一点比较好，可以表达的非线性的能力就越强一点</h6>
+
+<h6>3. 加正则防止过拟合。</h6>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[SVM简单介绍]]></title>

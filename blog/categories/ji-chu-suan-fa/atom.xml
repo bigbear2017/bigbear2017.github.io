@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 基础算法 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/ji-chu-suan-fa/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-05-22T20:00:21+08:00</updated>
+  <updated>2016-05-22T20:18:51+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -12,6 +12,64 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[NeronNetwork算法介绍]]></title>
+    <link href="http://bigbear2017.github.io/blog/2015/06/22/neronnetworksuan-fa-jie-shao/"/>
+    <updated>2015-06-22T20:05:00+08:00</updated>
+    <id>http://bigbear2017.github.io/blog/2015/06/22/neronnetworksuan-fa-jie-shao</id>
+    <content type="html"><![CDATA[<p>最近深度学习实在太火了，火到各个公司都在搞实验室。但是深度学习的基础，还是从neron network，BP，这样的算法开始。
+就简单回顾一下最简单的NN吧。</p>
+
+<h3>1. 算法介绍</h3>
+
+<p>我们假设只有一层的隐藏层，并且大小为M，输入$X \in R^p$，输出$Y \in R^K$，输出$Y$属于$K$ classes。所以，我们可以得到下面的定义:</p>
+
+<p>$$ \begin{matrix}
+D_m = \rho ( \alpha_m0 + \alpha_m^T X ) , m = 1, 2, &hellip; M \\
+T_k = \beta_k0 + \beta_k^T D, k = 1, 2, &hellip; K \\
+f_k(X) = g_k( T ) , k = 1,2, &hellip; K
+\end{matrix}$$</p>
+
+<p>其中$D = (D_1, D_2, &hellip; , D_M)$, $\rho = \frac{1}{ 1 + \exp^{(-v)} }$是sigmod function, $g_k$可以是identity function，或者是softmax function $\frac{exp^{T_k}}{\sum_{l = 1}^{K} exp^{T_l}}$.</p>
+
+<h3>2. 求解</h3>
+
+<p>训练采用的back propagation的方式，就是先利用参数计算结果，然后根据结果计算梯度，根据梯度再优化参数。
+根据上面的定义，我们可以得到loss function $R(\alpha, \beta)$如下:</p>
+
+<p>$$
+R(\alpha, \beta) = \sum_{k = 1}^K \sum_{n = 1}^N ( y_{ik} - f_k( x_i ) ) ^2
+$$</p>
+
+<p>其中$N$是样本数, $K$是样本的class的数目. 所以对$\alpha, \beta$分别求偏导，我们可以得到:</p>
+
+<p>$$\begin{matrix}
+\frac{\partial R_i}{\partial \beta_{km} } = -2(y_{ik} - f_k( x_i ) ) g^{\prime}(T_k) D_{mi}   \\
+\frac{\partial R_i}{\partial \alpha_{mp}} =  -\sum_{k=1}^{K}2(y_{ik} - f_k( x_i ) ) g^{\prime}(T_k) \beta_{k}\rho^{\prime}(\alpha_m^T x_i) x_{ip}
+\end{matrix}
+$$</p>
+
+<p>根据上面的式子，我们就可以利用gradient descent的方式，来训练模型了.</p>
+
+<p>$$ \begin{matrix}
+\beta^{r+1}_{km} = \beta^{r}_{km}  - \gamma_r \frac{\partial R_i}{\partial \beta_{km} } \\
+\alpha^{r+1}_{mp} = \alpha^{r}_{mp}  - \gamma_r \frac{\partial R_i}{\partial \beta_{mp} }
+\end{matrix}$$</p>
+
+<h3>3. 向量化</h3>
+
+<p>上面的式子，实在看着太繁琐了，我们还是对其进行向量化，可能看着更简单，实现也更方便一些.</p>
+
+<h3>3. 注意点</h3>
+
+<h6>1. 输入的起始点，不可以全部是零。因为全部是零的话，就永远全部是零，无法训练。也不可以过大，结果会不太好。最好的是随机靠近0的数。</h6>
+
+<h6>2. 隐藏层多一点比较好，可以表达的非线性的能力就越强一点</h6>
+
+<h6>3. 加正则防止过拟合。</h6>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[SVM简单介绍]]></title>
@@ -543,62 +601,6 @@ $ X $是输入矩阵，$Y$为标签向量，$P$为预测向量，$W$为对角线
 像现在训练的模型，动不动就上百万维的，再多内存也不够啊。
 所以我们需要一些更好优化的方法，Conjugate gradient或者 LBFGS。
 另外有的时候，我们的输入不一定就是0/1，如果有更多的类，怎么办呢？这个以后慢慢讨论。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[如何使用MapReduce计算文本的tf-idf]]></title>
-    <link href="http://bigbear2017.github.io/blog/2014/06/13/ru-he-shi-yong-mapreduceji-suan-wen-ben-de-tf-idf/"/>
-    <updated>2014-06-13T17:26:18+08:00</updated>
-    <id>http://bigbear2017.github.io/blog/2014/06/13/ru-he-shi-yong-mapreduceji-suan-wen-ben-de-tf-idf</id>
-    <content type="html"><![CDATA[<p>本文介绍如何使用MapReduce进行文本的tf-idf计算。
-程序的输入是一个个的文本，类似下面的：</p>
-
-<p>doc1: w1, w2, w3</p>
-
-<p>doc2: w4, w5, w6</p>
-
-<p>输出为一个个的Vector，可以是Sparse的Vector，或者是Dense Vector,
-我们就假设使用Sparse的Vector，输出如下：</p>
-
-<p>doc1_id, 1:0.1, 2:0.1, 3:0.03</p>
-
-<p>doc2_id, 4:0.1, 5:0.1, 6:0.01</p>
-
-<h2>如何使用MapReduce进行计算呢？</h2>
-
-<p>对一个单词$w_i$, 在文档$D_j$中，tf-idf的计算公式如下：
-$$ tf_idf= \frac{ N(w_i) } { N( D_j ) } * \log \frac{ \vert D \vert } { \vert j: w_i \in D_j \vert + 1 } $$
-其中$N(w_i)$ 是$w_i$在$D_j$中的频率，$N(D_j)$是$D_j$中所有词的频率，也就是文本的长度，
-$|D|$为所有文本的个数，$| j: w_j \in D_j |$ 为包含$w_i$的文档个数。</p>
-
-<p>统计tf-idf需要两个MapReduce Job，一个job统计每个词的tf-idf，然后将每个文档中的词聚合到一起。
-<code>
-MapReduce1 Mapper Input:
-doc1: w1, w2, w3
-doc2: w4, w5, w6
-MapReduce1 Mapper Output:
-w1_index: (doc1_id, tf_w1, w1_index)
-</code>
-其中 doc1_id根据对文档名字进行hash得到，tf_w1根据doc1中w1出现的次数来计算，
-w1_index根据词典计算，context的counter统计文档数量|D|</p>
-
-<p>MapReduce1 Reducer Output:</p>
-
-<p>doc1_id: (w1_index, tf-idf )</p>
-
-<p>tf-idf根据tf, |D|，所有包含w1的文档的个数</p>
-
-<p>MapReduce2 Mapper: Identity Mapper</p>
-
-<p>MapReduce2 Reducer: 根据doc_id，将所有相同文档归并到一起，得到:</p>
-
-<p>doc1_id: w1_index:tf-idf, w2_index:tf-idf</p>
-
-<p>doc2_id: w4_index:tf-idf, w5_index:tf-idf</p>
-
-<p>还有另外一种方法是，先计算每个词的idf，然后再将idf做为distributed cache
-分发给每一个mapper，然后得到每个文本的tf-idf.</p>
 ]]></content>
   </entry>
   

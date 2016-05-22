@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 基础算法 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/ji-chu-suan-fa/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-05-22T20:18:51+08:00</updated>
+  <updated>2016-05-22T20:22:32+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -63,11 +63,11 @@ $$</p>
 
 <h3>3. 注意点</h3>
 
-<h6>1. 输入的起始点，不可以全部是零。因为全部是零的话，就永远全部是零，无法训练。也不可以过大，结果会不太好。最好的是随机靠近0的数。</h6>
+<h4>1. 输入的起始点，不可以全部是零。因为全部是零的话，就永远全部是零，无法训练。也不可以过大，结果会不太好。最好的是随机靠近0的数。</h4>
 
-<h6>2. 隐藏层多一点比较好，可以表达的非线性的能力就越强一点</h6>
+<h4>2. 隐藏层多一点比较好，可以表达的非线性的能力就越强一点</h4>
 
-<h6>3. 加正则防止过拟合。</h6>
+<h4>3. 加正则防止过拟合。</h4>
 ]]></content>
   </entry>
   

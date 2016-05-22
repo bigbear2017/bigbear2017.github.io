@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 机器学习 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/ji-qi-xue-xi/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-05-22T19:53:24+08:00</updated>
+  <updated>2016-05-22T20:00:21+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -23,7 +23,7 @@
 <h3>1. Perceptron</h3>
 
 <p>说到svm，我们可以先从最简单的perceptron说起。Percetron是最简单的一种分类器。给n个点(X, Y), 假设
-$X \in R<sup>p</sup>, Y \in (0, 1)$，如何得到一个分类器$f(x) = \beta * x + \beta_0$，使得所有被错误分类的点，到分类线的距离最小。我们希望说，如果被错误分类了，也不要错的太厉害。这样的话，我们就可以得到下面的式子:</p>
+$X \in R^p, Y \in (0, 1)$，如何得到一个分类器$f(x) = \beta * x + \beta_0$，使得所有被错误分类的点，到分类线的距离最小。我们希望说，如果被错误分类了，也不要错的太厉害。这样的话，我们就可以得到下面的式子:</p>
 
 <p>$$
 D( \beta, \beta_0 ) = - \sum_{i} y_i( \beta x_i + \beta_0 )

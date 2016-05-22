@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 算法 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/suan-fa/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2015-12-19T20:04:33+08:00</updated>
+  <updated>2016-05-22T19:31:11+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Newton Method]]></title>
+    <title type="html"><![CDATA[Newton Method, BFGS和LBFGS]]></title>
     <link href="http://bigbear2017.github.io/blog/2014/09/12/newton-method/"/>
     <updated>2014-09-12T21:49:55+08:00</updated>
     <id>http://bigbear2017.github.io/blog/2014/09/12/newton-method</id>
@@ -22,53 +22,87 @@
 
 <h2>Newton Method</h2>
 
-<p>假设$ y = f(x) $，为了求方程$ f(x) = 0$的解，我们可以用下面迭代的方式：
-$$ x<em>{n+1} = x_n - \frac{ f(x_n) } { f^{\prime} (x_n) } $$
-比如$ f(x) = x^{2} - 5 $，我们可以这么来求：
-$$ x_1 = 5, f(5) = 20, f^{\prime}(5) = 10, x_2 = 5 - 20 / 10 = 3 $$
+<p>假设$y = f(x)$，为了求方程$f(x) = 0$的解，我们可以用下面迭代的方式：</p>
+
+<p>$$ x_{n+1} = x_n - \frac{ f(x_n) } { f^{\prime} (x_n) } $$</p>
+
+<p>比如$ f(x) = x^{2} - 5 $，我们可以这么来求：</p>
+
+<p>$$ x_1 = 5, f(5) = 20, f^{\prime}(5) = 10, x_2 = 5 - 20 / 10 = 3 $$
 $$x_2 = 3, f(3) = 4, f^{\prime}(3) = 6, x_3 = 3 - 4/6 = 7/3 $$
-$$x_3 = 7/3, f(7/3) = 4/9, f^{\prime}(7/3) = 14/3, x_4 = 7/3 - 2/21 = 47/21 $$
-这样$ 47/21 $ 已经非常接近5的平方根了。为什么可以这么计算呢？证明如下：
-根据泰勒展开式，$ y = f(x) $ 在 $x_n$处的展开为：
-$$ y = f^{\prime}(x_n) ( x</em>{n+1} - x_n ) + f(x_n) $$
-如果$ y = 0 $, 那么可得如下结果：
-$$ x<em>{n+1} = x_n - f(x_n) / f^{\prime}(x_n) $$
-在许多机器学习的算法中，我们经常可能碰到的是另外一种形式，比如我们想最大化log likelihood函数。
+$$x_3 = 7/3, f(7/3) = 4/9, f^{\prime}(7/3) = 14/3, x_4 = 7/3 - 2/21 = 47/21 $$</p>
+
+<p>这样$ 47/21 $ 已经非常接近5的平方根了。为什么可以这么计算呢？证明如下：
+根据泰勒展开式，$ y = f(x) $ 在 $x_n$处的展开为：</p>
+
+<p>$$ y = f^{\prime}(x_n) ( x_{n+1} - x_n ) + f(x_n) $$</p>
+
+<p>如果$ y = 0 $, 那么可得如下结果：</p>
+
+<p>$$ x_{n+1} = x_n - f(x_n) / f^{\prime}(x_n) $$</p>
+
+<p>在许多机器学习的算法中，我们经常可能碰到的是另外一种形式，比如我们想最大化log likelihood函数。
 这个时候，我们会对函数先求一个导，导数$f^{\prime}(x) = 0$的地方一般就是极值点。因此这个时候，我们想求的是
-$ f^{\prime}(x) = 0 $，而不是$ f(x) = 0 $。如果求$ f^{\prime}(x) = 0 $，则方程的解如下：
-$$ x</em>{n+1} = x_n - \frac{f^{\prime}(x)}{f^{\prime \prime}(x)} $$
-但是因为这个方法要求函数的二阶导数，就像在logistic regression中说的一样。求出来的Hessian Matrix实在太大，
+$ f^{\prime}(x) = 0 $，而不是$ f(x) = 0 $。如果求$ f^{\prime}(x) = 0 $，则方程的解如下：</p>
+
+<p>$$ x_{n+1} = x_n - \frac{f^{\prime}(x)}{f^{\prime \prime}(x)} $$</p>
+
+<p>但是因为这个方法要求函数的二阶导数，就像在logistic regression中说的一样。求出来的Hessian Matrix实在太大，
 求逆也非常的麻烦。因此就有人想到了更为简单的算法，LBFGS就是其中一个比较好的方法，我们先从BFGS算法说起。</p>
 
 <h2>BFGS</h2>
 
 <p>BFGS算法是由Broyden, Fletcher, Goldfarb 和 Shanno四个人共同提出的。这里我们把他们的名字列出来，纪念一下。:)
-由最简单的Line Search的方法，我们知道对于求方程$ f(x) = 0 $的解，我们可以进行如下迭代：
-$$ x<em>{k+1} = x_k + \alpha_k \rho_k $$
-其中 $\alpha_k$ 为步长，$\rho_k$为迭代方向。根据泰勒展开，我们可以把$f(x)$写成下面格式：
-$$ f(x</em>{k+1}) = f(x_k) + f^{\prime}(x_k)(x<em>{k+1} - x_k) + \frac{1}{2} (x</em>{k+1} - x_k)^{T} f^{\prime \prime}(x_k) ( x<em>{k+1} - x_k ) $$
-上面的函数，也可以写成$ \rho $ 的函数，如下：
-$$ m_k(\rho) = f_k + f^{\prime T}</em>k \rho + \frac{1}{2} \rho^{T} B_k \rho $$
-其中$f_k$为$f(x_k)$, $f^{\prime}<em>k$为$f(x)$在$x_k$处的导数。根据上面的式子，当$\rho = 0$的时候，
-$$ m_k(0) =  f_k, m^{\prime}</em>k (0) = f^{\prime T}<em>k $$
-因此在任何一点$x_k$，$f(x_k)$都可以写成$m_k$的形式，方程的曲线也应该是相同的。根据上面的定义，我们可以得到方程在
-$x</em>{k+1}$处，$m<em>{k+1}$的表达式为:
-$$ m</em>{k+1}(\rho) = f<em>{k+1} + f^{\prime T}</em>{k+1} \rho + \frac{1}{2} \rho^{T} B<em>{k+1} \rho $$
-根据这个表达式，$m</em>{k+1}$ 这个表达式在$x_k$处的导数为:
-$$ f^{\prime}(x_k) = m^{\prime}<em>{k+1}(-\alpha_k \rho_k) = f^{\prime T}</em>{k+1} - \alpha_k B<em>{k+1} \rho_k $$
-所以得到：
-$$ B</em>{k+1} \alpha_k \rho_k = f^{\prime}<em>{k+1} - f^{\prime}</em>k $$
-为了简化，定义如下:
-$$ s_k = x<em>{k+1} - x_k = \alpha_k \rho_k, y</em>{k} = f^{\prime}<em>{k+1} - f^{\prime}</em>k $$
-所以上面的结果可以写成:
-$$ B<em>{k+1} s_k = y_k $$
-假设$ H</em>{k+1} $为$B<em>{k+1}$的逆矩阵，那么我们可以得到:
-$$ H</em>{k+1} y_k = s_k $$
-利用$H_k$，$H<em>{k+1}$可以通过下面的方式获得:
-$$ \min_H || H - H</em>{k+1} || $$
-subject to $ H = H^{T}, Hy_k = s_k $.这样我们可以得到$H<em>{k+1}$的解为：
-$$ H</em>{k+1} = (I - p_k s_k y^{T}<em>k)H_k(I-p_k y_k s^{T}</em>k) + p_k s_k s^{T}<em>k$$
-其中$p_k = \frac{1}{y^{T}</em>k s_k}$.到这里BFGS的解法就算明白了。相对于Newton Method，BFGS方法不用
+由最简单的Line Search的方法，我们知道对于求方程$ f(x) = 0 $的解，我们可以进行如下迭代：</p>
+
+<p>$$ x_{k+1} = x_k + \alpha_k \rho_k $$</p>
+
+<p>其中 $\alpha_k$ 为步长，$\rho_k$为迭代方向。根据泰勒展开，我们可以把$f(x)$写成下面格式：</p>
+
+<p>$$ f(x_{k+1}) = f(x_k) + f^{\prime}(x_k)(x_{k+1} - x_k) + \frac{1}{2} (x_{k+1} - x_k)^{T} f^{\prime \prime}(x_k) ( x_{k+1} - x_k ) $$</p>
+
+<p>上面的函数，也可以写成$ \rho $ 的函数，如下：</p>
+
+<p>$$ m_k(\rho) = f_k + f^{\prime T}_k \rho + \frac{1}{2} \rho^{T} B_k \rho $$</p>
+
+<p>其中$f_k$为$f(x_k)$, $f^{\prime}_k$为$f(x)$在$x_k$处的导数。根据上面的式子，当$\rho = 0$的时候，</p>
+
+<p>$$ m_k(0) =  f_k, m^{\prime}_k (0) = f^{\prime T}_k $$</p>
+
+<p>因此在任何一点$x_k$，$f(x_k)$都可以写成$m_k$的形式，方程的曲线也应该是相同的。根据上面的定义，我们可以得到方程在
+$x_{k+1}$处，$m_{k+1}$的表达式为:</p>
+
+<p>$$ m_{k+1}(\rho) = f_{k+1} + f^{\prime T}_{k+1} \rho + \frac{1}{2} \rho^{T} B_{k+1} \rho $$</p>
+
+<p>根据这个表达式，$m_{k+1}$ 这个表达式在$x_k$处的导数为:</p>
+
+<p>$$ f^{\prime}(x_k) = m^{\prime}_{k+1}(-\alpha_k \rho_k) = f^{\prime T}_{k+1} - \alpha_k B_{k+1} \rho_k $$</p>
+
+<p>所以得到：</p>
+
+<p>$$ B_{k+1} \alpha_k \rho_k = f^{\prime}_{k+1} - f^{\prime}_k $$</p>
+
+<p>为了简化，定义如下:</p>
+
+<p>$$ s_k = x_{k+1} - x_k = \alpha_k \rho_k, y_{k} = f^{\prime}_{k+1} - f^{\prime}_k $$</p>
+
+<p>所以上面的结果可以写成:</p>
+
+<p>$$ B_{k+1} s_k = y_k $$</p>
+
+<p>假设$ H<em>{k+1} $为$B</em>{k+1}$的逆矩阵，那么我们可以得到:</p>
+
+<p>$$ H_{k+1} y_k = s_k $$</p>
+
+<p>利用$H_k$，$H_{k+1}$可以通过下面的方式获得:</p>
+
+<p>$$ \min_H || H - H_{k+1} || $$</p>
+
+<p>subject to $ H = H^{T}, Hy_k = s_k $.这样我们可以得到$ H_{k+1} $的解为：</p>
+
+<p>$$ H_{k+1} = (I - p_k s_k y^{T}_k)H_k(I-p_k y_k s^{T}_k) + p_k s_k s^{T}_k$$</p>
+
+<p>其中$p_k = \frac{1}{y^{T}_k s_k}$.到这里BFGS的解法就算明白了。相对于Newton Method，BFGS方法不用
 计算Hessian Matrix的逆矩阵。但是它仍然要计算一个matrix，所以内存的占用仍然是一样的。具体算法如下：
 <code>
 while || f^{\prime}_k|| &gt; \epsilon
@@ -84,12 +118,17 @@ end( while )
 
 <h3>LBFGS</h3>
 
-<p>根据上面的推导，BFGS算法可以写成下面的格式:
-$$ x<em>{k+1} = x</em>{k} - \alpha_k H_k f^{\prime}<em>k(x) $$
-其中$\alpha_k$为步长，$H_k$可以写成下面的格式:
-$$ H</em>{k+1} = V^{T}<em>k H</em>{k} V_k + p_k s_k s^{T}<em>k $$
-其中$p_k = \frac{1}{y^{T}</em>k s_k}$, $V_k = I - p_k y_k s^{T}<em>k $, and $s_k = x</em>{k+1} - x_k$,$y_k = f^{\prime}<em>{k+1} - f^{\prime}</em>{k}$.
-由于计算$H<em>{k+1}$相当的麻烦，我们可以存储$m$个最近的$y_i, s_i$，然后来近似当前的$H</em>{k+1}$. 根据$H_{k+1}$的定义，我们不难发现这是一个递归的定义。在所有计算的过程中，其实就只有$H_0$这么一个矩阵，其他的全部是向量。如果我们使用一个对角矩阵来近似$H_0$，那么所有的计算都是可以用向量来表示。这个也是为什么它叫limited memory BFGS。
+<p>根据上面的推导，BFGS算法可以写成下面的格式:</p>
+
+<p>$$ x_{k+1} = x_{k} - \alpha_k H_k f^{\prime}_k(x) $$</p>
+
+<p>其中$\alpha_k$为步长，$H_k$可以写成下面的格式:</p>
+
+<p>$$ H_{k+1} = V^{T}_k H_{k} V_k + p_k s_k s^{T}_k $$</p>
+
+<p>其中$p_k = \frac{1}{y^{T}_k s_k}$, $V_k = I - p_k y_k s^{T}_k $, and $s_k = x_{k+1} - x_k$,$y_k = f^{\prime}_{k+1} - f^{\prime}_{k}$.</p>
+
+<p>由于计算$H_{k+1}$相当的麻烦，我们可以存储$m$个最近的$y_i, s_i$，然后来近似当前的$H_{k+1}$. 根据$H_{k+1}$的定义，我们不难发现这是一个递归的定义。在所有计算的过程中，其实就只有$H_0$这么一个矩阵，其他的全部是向量。如果我们使用一个对角矩阵来近似$H_0$，那么所有的计算都是可以用向量来表示。这个也是为什么它叫limited memory BFGS。
 <code>
 calculate the new direction \rho_k
 q = f^{\prime}(x_k)

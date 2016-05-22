@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://bigbear2017.github.io/blog/2016/03/27/chan-pin-tu-cao-tie-bu-tu-bu-kuai-a/</loc>
+    <lastmod>2016-03-27T21:19:25+08:00</lastmod>
+  </url>
+  <url>
     <loc>http://bigbear2017.github.io/blog/2015/12/19/find-xue-xi-bi-ji/</loc>
     <lastmod>2015-12-19T19:30:56+08:00</lastmod>
   </url>
@@ -58,5 +62,8 @@
   </url>
   <url>
     <loc>http://bigbear2017.github.io/blog/categories/sheng-huo/</loc>
+  </url>
+  <url>
+    <loc>http://bigbear2017.github.io/blog/categories/tu-cao/</loc>
   </url>
 </urlset>

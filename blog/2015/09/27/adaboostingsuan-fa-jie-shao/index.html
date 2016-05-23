@@ -1,0 +1,157 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>AdaBoosting算法介绍 | To Be Your Salt</title>
+
+	<meta name="author" content="Cao Nannan"> 
+	
+	<meta name="description" content="我是一个基督徒，喜欢机器学习，Linux, 编程方面的知识。目前从事点击率预估， 文字链匹配广告，以及想关的工作。 生活中，我喜欢上帝，喜欢耶稣基督，也喜欢读圣经。"> <meta name="keywords" content="">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="To Be Your Salt" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" rel="stylesheet" type="text/css">
+	
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	
+</head>
+
+
+
+<body>
+	<header id="header"><div class="inner">
+  <ul class="navigation">
+    <li><a href="/"><h1>To Be Your Salt</h1></a></li>
+    <li><a href="/" class="is-selected">Blog</a></li>
+    <li><a href="http://github.com/bigbear2017" target="blank">Github</a></li>
+  </ul>
+</div>
+</header>
+
+	<div id="content" class="inner"><article class="post">
+	<h2 class="title">AdaBoosting算法介绍</h2>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+
+<time datetime="2015-09-27T21:41:04+08:00" pubdate data-updated="true">Sep 27th, 2015</time></div>
+	</div>
+	<div class="entry-content"><p>Boosting 是一种很有意思的算法。在没有SVM之前，今天就让我们来一同回顾一下这个经典的算法吧。</p>
+
+<h2>1. 模型定义</h2>
+
+<p>假设模型的输入为$X \in R^p$，输出为$ Y \in (-1, 1)$，输入和输出都有N个点。我们手上呢，有一个很简单的classfier，$G(x)$，他实在不怎么样，可能就比随机猜要好一点点。我们如何利用这个简单的分类器，对数据进行很好的分类呢？AdaBoosting就提出一种很好的办法: 将弱的分类器组合起来，然后我们形成一个强的分类器。这个想法很好，但是我们真的可以把分类器组合起来吗？首先怎么把分类器组合起来呢？直接用余数来训练吗？这样组合起来，分类器变的更糟糕，怎么办？AdaBoosting巧妙地利用了每一个分类器的优点，并且组合了起来。结果也是相当地惊人，在它刚刚被提出来的时候，几乎是当时最好的算法。首先，组合分类器的定义如下:</p>
+
+<p>$$ G(x) = sign ( \sum_{i =1 }^{M} \alpha_m G_m(x)) $$</p>
+
+<p>那如何得到每一个弱分类器的权重呢？AdaBoosting 是利用了每个分类器的错误率来进行组合的，每一次用$G(x)$来分类的错误率就定义如下:</p>
+
+<p>$$ E = \frac{1}{N} \sum_{i=1}^{N} I(y_i \ne G(x_i)$$</p>
+
+<h2>2.模型训练</h2>
+
+<p>Algorithm AdaBoost</p>
+
+<blockquote><ol>
+<li>Initialize  $ \omega_i = \frac{1}{N} $,  i = 1, 2, &hellip; N</li>
+<li>For m = 1 to M:</li>
+<li>(a) Fit a classifier G(x) to training data using weights $\omega_i$</li>
+<li>(b)Compute</li>
+<li>$$ err_m = \frac{\sum_{i=1}^{N} \omega_m I( y_i \ne G_m(x))} {\sum_{i = 1}^{N} \omega_i}  $$</li>
+<li>&copy; Compute $ \alpha_m = \log(\frac{( 1 - err_m)} {err_m} ) $</li>
+<li>(d) Update $\omega_i  = \omega_i \exp(\alpha_m I( y_i \ne G_m(x_i) )$</li>
+<li>Output  $ G(x) = sign[ \sum_{m=1}^{M} \alpha_m G_m(x) ] $</li>
+</ol>
+</blockquote>
+
+<h2>3. 算法解读</h2>
+
+<ol>
+<li>为什么 $\alpha_m$定义是 $\log(\frac{( 1 - err_m)} {err_m} )$ ?</li>
+</ol>
+
+
+<p>首先$err_m$的取值范围是$(0, 1)$。如果分类器$G_m(x)$的错误率越高，那么$err_m$就越接近于1, 否则就越接近于$0$。而根据常识来说，如果一个分类器很差劲，错误率越高呢，我们就希望他的权重就越低，越接近于0。而这样的话，就让我们想到了一个很常见的函数sigmod fuction。就让我们来证明这个来历吧。</p>
+
+<p>$$ \begin{matrix}
+err_m =  \frac{1}{1 + \exp^{\alpha}} \\
+=> 1 + \exp^{\alpha} = \frac{1}{err_m} \\
+=> \exp^{\alpha} = \frac{1}{err_m} - 1 \\
+=> \alpha = \log(\frac{( 1 - err_m)} {err_m} )
+\end{matrix} $$</p>
+
+<p>上面并不是logistic function(lf)，而是一个按照y轴对称的lf，因为如果直接用lf的话，err越大，权重也会越大了。</p>
+
+<ol>
+<li>为什么每次要更新$\omega_i$ ?
+对于 $\omega_i$ 的更新，我们可以进行这样的解读:
+
+<blockquote><p>if $y_i == G(x_i)$ $\omega_i == \omega_i$
+else $\omega_i = \omega_i * \frac{1- err_m}{err_m}$</p></blockquote></li>
+</ol>
+
+
+<p>对于 $\frac{1- err_m}{err_m}$，我们知道$err_m$越大，值越小。也就是说，错误率越高，我们的就权重越低。这是可以理解的，如果$err_m$很大，说明分类器不好。被这样一个分类器给分错了，那我们可能觉得没关系。但是如果$err_m$很小，说明分类器很好，被一个很好的分类器分错了，说明这个点，我们希望在下次的时候，可以被其他的分类器补充。</p>
+</div>
+
+
+<div class="sharing">
+  
+  
+  
+</div>
+</article>
+</div>
+	<footer id="footer" class="inner"><script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({
+	tex2jax: {
+		inlineMath: [ ['$','$'] ],
+		displayMath: [ ['$$','$$'] ],
+	},
+	processEscapes: true
+});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+<div class="aboutme">
+<hr>
+  <div class="profile">
+    <a href="http://twitter.com/"><img class="icon" src=""></a>
+
+    <h3>Cao Nannan</h3>
+    <p><a href="http://twitter.com/">@</a></p>
+
+    <div class="codes">
+      <h4>Codes</h4>
+      <div class="github"><a href="https://github.com/bigbear2017">github.com/bigbear2017</a></div>
+    </div>
+  </div>
+
+  <div class="float_clear"></div>
+
+</div>
+Copyright &copy; 2016
+ Cao Nannan 
+<br>
+Powered by Octopress.
+
+
+
+</footer>
+	
+
+</body>
+</html>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 机器学习 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/ji-qi-xue-xi/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-05-23T20:51:14+08:00</updated>
+  <updated>2016-05-23T21:54:25+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -12,6 +12,70 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[AdaBoosting算法介绍]]></title>
+    <link href="http://bigbear2017.github.io/blog/2015/09/27/adaboostingsuan-fa-jie-shao/"/>
+    <updated>2015-09-27T21:41:04+08:00</updated>
+    <id>http://bigbear2017.github.io/blog/2015/09/27/adaboostingsuan-fa-jie-shao</id>
+    <content type="html"><![CDATA[<p>Boosting 是一种很有意思的算法。在没有SVM之前，今天就让我们来一同回顾一下这个经典的算法吧。</p>
+
+<h2>1. 模型定义</h2>
+
+<p>假设模型的输入为$X \in R^p$，输出为$ Y \in (-1, 1)$，输入和输出都有N个点。我们手上呢，有一个很简单的classfier，$G(x)$，他实在不怎么样，可能就比随机猜要好一点点。我们如何利用这个简单的分类器，对数据进行很好的分类呢？AdaBoosting就提出一种很好的办法: 将弱的分类器组合起来，然后我们形成一个强的分类器。这个想法很好，但是我们真的可以把分类器组合起来吗？首先怎么把分类器组合起来呢？直接用余数来训练吗？这样组合起来，分类器变的更糟糕，怎么办？AdaBoosting巧妙地利用了每一个分类器的优点，并且组合了起来。结果也是相当地惊人，在它刚刚被提出来的时候，几乎是当时最好的算法。首先，组合分类器的定义如下:</p>
+
+<p>$$ G(x) = sign ( \sum_{i =1 }^{M} \alpha_m G_m(x)) $$</p>
+
+<p>那如何得到每一个弱分类器的权重呢？AdaBoosting 是利用了每个分类器的错误率来进行组合的，每一次用$G(x)$来分类的错误率就定义如下:</p>
+
+<p>$$ E = \frac{1}{N} \sum_{i=1}^{N} I(y_i \ne G(x_i)$$</p>
+
+<h2>2.模型训练</h2>
+
+<p>Algorithm AdaBoost</p>
+
+<blockquote><ol>
+<li>Initialize  $ \omega_i = \frac{1}{N} $,  i = 1, 2, &hellip; N</li>
+<li>For m = 1 to M:</li>
+<li>(a) Fit a classifier G(x) to training data using weights $\omega_i$</li>
+<li>(b)Compute</li>
+<li>$$ err_m = \frac{\sum_{i=1}^{N} \omega_m I( y_i \ne G_m(x))} {\sum_{i = 1}^{N} \omega_i}  $$</li>
+<li>&copy; Compute $ \alpha_m = \log(\frac{( 1 - err_m)} {err_m} ) $</li>
+<li>(d) Update $\omega_i  = \omega_i \exp(\alpha_m I( y_i \ne G_m(x_i) )$</li>
+<li>Output  $ G(x) = sign[ \sum_{m=1}^{M} \alpha_m G_m(x) ] $</li>
+</ol>
+</blockquote>
+
+<h2>3. 算法解读</h2>
+
+<ol>
+<li>为什么 $\alpha_m$定义是 $\log(\frac{( 1 - err_m)} {err_m} )$ ?</li>
+</ol>
+
+
+<p>首先$err_m$的取值范围是$(0, 1)$。如果分类器$G_m(x)$的错误率越高，那么$err_m$就越接近于1, 否则就越接近于$0$。而根据常识来说，如果一个分类器很差劲，错误率越高呢，我们就希望他的权重就越低，越接近于0。而这样的话，就让我们想到了一个很常见的函数sigmod fuction。就让我们来证明这个来历吧。</p>
+
+<p>$$ \begin{matrix}
+err_m =  \frac{1}{1 + \exp^{\alpha}} \\
+=> 1 + \exp^{\alpha} = \frac{1}{err_m} \\
+=> \exp^{\alpha} = \frac{1}{err_m} - 1 \\
+=> \alpha = \log(\frac{( 1 - err_m)} {err_m} )
+\end{matrix} $$</p>
+
+<p>上面并不是logistic function(lf)，而是一个按照y轴对称的lf，因为如果直接用lf的话，err越大，权重也会越大了。</p>
+
+<ol>
+<li>为什么每次要更新$\omega_i$ ?
+对于 $\omega_i$ 的更新，我们可以进行这样的解读:
+
+<blockquote><p>if $y_i == G(x_i)$ $\omega_i == \omega_i$
+else $\omega_i = \omega_i * \frac{1- err_m}{err_m}$</p></blockquote></li>
+</ol>
+
+
+<p>对于 $\frac{1- err_m}{err_m}$，我们知道$err_m$越大，值越小。也就是说，错误率越高，我们的就权重越低。这是可以理解的，如果$err_m$很大，说明分类器不好。被这样一个分类器给分错了，那我们可能觉得没关系。但是如果$err_m$很小，说明分类器很好，被一个很好的分类器分错了，说明这个点，我们希望在下次的时候，可以被其他的分类器补充。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[NeronNetwork算法介绍]]></title>
@@ -491,117 +555,6 @@ print 'prediction number: ', pre_num, 'mse3: ', mse3, 'ase3: ', ase3
 <li>ase3:  1.58618085221</li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[LogisticRegression算法介绍]]></title>
-    <link href="http://bigbear2017.github.io/blog/2014/06/22/logisticregressiontui-dao-zheng-ming/"/>
-    <updated>2014-06-22T21:43:48+08:00</updated>
-    <id>http://bigbear2017.github.io/blog/2014/06/22/logisticregressiontui-dao-zheng-ming</id>
-    <content type="html"><![CDATA[<p>这是我要复习和介绍的第一个机器学习算法，logistic regression，既可以用来作回归，
-也可以用来作分类。训练比线性回归复杂一点，但比SVM容易很多，可以说是学习机器学习
-入门的算法。以下是Logistic Regression模型的推导证明，主要参考的是
-Elements of statistical learning, data mining, inference and prediction。
-我会用几个系列讨论这个问题，以及相关的优化算法。</p>
-
-<h2>模型定义</h2>
-
-<p>暂且先讨论只有两种输出的情况, $ y = 0/1 $, 假设输入向量为$m$维, $ x \in R^{m} $。
-模型的定义如下：</p>
-
-<p>$$ \log \frac{ Pr(y = 1 \vert x ) } { Pr(y = 0 \vert x )} = \beta_0  + \beta $$</p>
-
-<p>由上面的式子可以得到：</p>
-
-<p>$$ \frac{Pr( y = 1 \vert x )} { Pr( y = 0 \vert x  ) } = \exp^{\beta_0 + \beta x } $$</p>
-
-<p>并且知道:</p>
-
-<p>$$ Pr( y = 1 \vert x ) + Pr( y = 0 \vert x ) = 1 $$</p>
-
-<p>把式子代到上面得到：</p>
-
-<p>$$ Pr(y = 1 \vert x ) = \frac{ \exp^{ \beta_0 + \beta x } } { 1+ \exp^{ \beta_0 + \beta x } } \
-Pr( y = 0 \vert x ) = \frac{ 1 } { 1+ \exp^{ \beta_0 + \beta x  } } $$</p>
-
-<h2>最大化Log-Likelihood</h2>
-
-<p>假设 $ p = Pr(y = 1 \vert x ) $ 并且 $ \beta x = \beta_0 + \beta x $, Log-Likelihood如下：</p>
-
-<p>$$ \ell( \beta ) = \Sigma_{ i = 1 }^{ N } {  y_i \log(p) + (1-y_i) \log(1-p)  } $$</p>
-
-<p>$$ = \Sigma_{i = 1}^{N} { y_i \log(p) + log(1-p) - y_i \log(1-p) } $$</p>
-
-<p>$$ = \Sigma_{i = 1}^{N} { y_i \beta^{T} x_i - \log ( 1 + \exp^{ \beta x_i} ) } $$
-上面这个函数是什么意思呢？先从似然函数和最大似然估计说起。
-似然函数的意思是，如果变量$X^{n}=(x_1, x_2, &hellip; , x_n )$的联合分布，服从概率密度函数
-$p(x_1, x_2, &hellip; , x_n, \theta )$，那么</p>
-
-<p>$$ L(\theta) = p( x_1, x_2, &hellip; , x_n, \theta ) $$</p>
-
-<p>因此我们可以把数据中的$x$和$y$，放在一起看成一个$m+1$维的变量，如果$y=1$，根据上面的公式
-$L(\theta) = p( x, 1, \theta )$，也就是预测的值为1的概率。如果$y=0$，根据上面的公式，
-$L(\theta) = p( x, 0, \theta )$，就是预测的值为0的概率。因此把所有样子的似然估计加起来，
-就得到了上面的式子。这个最大似然估计法，是统计中最常用的方法之一。</p>
-
-<p>为了最大化上面的函数，我们可以使用Newton Method来进行迭代，
-初始化一个$\beta$，然后不断地更新$\beta$，最终得到最优解，
-我会在下一篇里面介绍Newton Method，以及相关简单的优化算法。
-根据Newton Method，我们需要计算方程的一阶导数$F^{1}(\beta)$和
-二阶导数$F^{2}(\beta)$，一阶导数计算还是比较简单的，只要会一般
-的求导公式，应该都可以得到下面的结果：</p>
-
-<p>$$ F^{1}(\beta) = \Sigma_{i = 1}^{N} { y_i x_i - \frac{1}{ ( 1+\exp^{\beta x_i} ) } \exp^{ \beta x_i } x_i }$$</p>
-
-<p>$$ = \Sigma_{i = 1}^{N} x_i ( y_i - p_i ) $$</p>
-
-<p>这个只要会求导数，应该这个公式都可以求出来。先来看看这个结果，
-首先这个结果是一个向量，在迭代的过程中，当$\beta$为某一个值的时候，
-$ y_i $ 和 $ p_i $都是一个实数。而$ x_i $是$m$维的，因此这个结果是一个向量。
-这个也比较容易理解，对一个向量求导，结果也应该是一个向量。
-但要求二阶导数就会麻烦一点，因为一阶导数已经是一个向量了，再对向量进行求一阶导数，
-结果是一个$ N * N $的矩阵，这个矩阵叫Hessian Matrix。如果对这个方面有问题的话，
-可以在google里面搜索: derevative of vectors。有一个pdf文档详细的介绍了，
-如何去求向量的导数，可以看看理解一下。这里的推导还算简单，直接可以
-把$x_i$看成一个一维的变量，推导如下：</p>
-
-<p>$$ F^{2}(\beta) = F^{1} { \Sigma_{i=1}^{N} x_i ( y_i - \frac{\exp^{\beta x }}{(1 + \exp^{\beta x})} ) } $$</p>
-
-<p>$$ = F^{1} { \Sigma_{i=1}^{N} x_i ( y_i - \frac{1}{1 + \exp^{-\beta x } } ) } $$</p>
-
-<p>$$ = \Sigma_{i=1}^{N} - x_i x_i \frac{\exp^{-\beta x}}{(1 + \exp^{-\beta x })^{2} } $$</p>
-
-<p>$$ = \Sigma_{i=1}^{N} - x_i x_i p_i ( 1 - p_i ) $$</p>
-
-<p>再看看这个结果，$x_i$乘上$x_i$很显然是一个矩阵，而$p_i$和$1-p_i$都是常数。
-这样我们就得到了一个函数的二阶导数。
-然后就可以根据Newton Method来进行迭代了，迭代如下：</p>
-
-<p>$$ \beta^{new} = \beta^{old} - \frac{F^{1}(\beta) }{F^{2}(\beta) } $$</p>
-
-<p>因为$F^{2}(\beta)$是一个矩阵，除一个矩阵和除一个数是类似的，都是乘上它的$-1$次方，
-就是要算这个矩阵的逆矩阵。</p>
-
-<h2>矩阵形式</h2>
-
-<p>这样的话，按照这个方程我们就可以训练LR的模型了。如果使用矩阵计算的话，可以写成下面的样子，
-$ X $是输入矩阵，$Y$为标签向量，$P$为预测向量，$W$为对角线矩阵，值为 $ p_i ( 1-p_i ) $：</p>
-
-<p>$$ F^{1}(\beta) = X^{T} ( Y - P ), F^{2}(\beta) = - X^{T} W X  $$</p>
-
-<p>Newton Method的迭代为：</p>
-
-<p>$$ \beta^{new} = \beta^{old} + ( X^{T} W X )^{-1} X^{T} (Y - P ) $$</p>
-
-<h2>前进的方向</h2>
-
-<p>好，到此为止，logistic regression最简单的结果就有了。但是在实际的生活中，
-却很少有人用Newton method去解logistic regression。因为要计算Hessian Matrix，
-这个matrix太可怕了，如果是$m$维的输入，这个matrix就是$m*m$维的。
-像现在训练的模型，动不动就上百万维的，再多内存也不够啊。
-所以我们需要一些更好优化的方法，Conjugate gradient或者 LBFGS。
-另外有的时候，我们的输入不一定就是0/1，如果有更多的类，怎么办呢？这个以后慢慢讨论。</p>
 ]]></content>
   </entry>
   

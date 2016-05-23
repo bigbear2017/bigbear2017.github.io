@@ -3,7 +3,7 @@ layout: post
 title: "Factorization Meets the Neighborhood I"
 date: 2014-09-08 21:54:12 +0800
 comments: true
-categories: 机器学习 算法
+categories: 机器学习 基础算法
 ---
 <!--more本文主要介绍Factorization Meets the Neighborhood中的算法一:baseline method，并简单地进行实现。我会尝试把几个算法都实现一下，然后分几个文章进行介绍。 Baseline estimates 假设一个user对一个item的评价为-->
 本文主要介绍Factorization Meets the Neighborhood中的算法一:

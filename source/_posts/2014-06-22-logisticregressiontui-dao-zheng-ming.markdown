@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "LogisticRegression推导证明"
+title: "LogisticRegression算法介绍"
 date: 2014-06-22 21:43:48 +0800
 comments: true
-categories: 机器学习 算法
+categories: 机器学习 基础算法
 ---
 
 这是我要复习和介绍的第一个机器学习算法，logistic regression，既可以用来作回归，

@@ -3,7 +3,7 @@ layout: post
 title: "如何使用MapReduce计算文本的tf-idf"
 date: 2014-06-13 17:26:18 +0800
 comments: true
-categories: 算法
+categories: 基础算法
 ---
 
 本文介绍如何使用MapReduce进行文本的tf-idf计算。

@@ -1,0 +1,77 @@
+---
+layout: post
+title: "WAND算法介绍"
+date: 2014-08-14 20:43:21 +0800
+comments: true
+categories: 基础算法 信息检索
+---
+
+本文主要介绍了WAND算法的思想，以及算法中我们会想到的一些问题。
+WAND算法主要应用于query匹配，它可以对短query或者长query实现模糊匹配，
+并且效率和效果都很好。在搜索引擎和广告投放中都有很好的应用。
+## 基本假设
+1. 我们对于每一个搜索词，我们都已经build了一个倒排表，表里面是相应的文本ID
+2. 对于每一个文本，我们都有一个唯一的ID号
+3. 系统每次返回一个candidate ID，用来进行full evaluation，如果找不到，则返回一个最大的ID，LastIndex
+
+## The WAND Operator
+$ WAND(X_1, w_1, \ldots, X_k, w_k, \theta ) $ is true iff
+$$ \displaystyle \sum_{1 \le i \le k } x_i w_i \ge \theta $$
+where $ x_i = 1 $ if $ X_i $ is true, otherwise 0.
+根据上面的定义，AND 操作可以如下定义:
+$$ AND( X_1, X_2, \ldots, X_K ) \equiv WAND(X_1, w_1, \ldots , X_k, w_k, k ) $$
+同理，OR 操作可以如下定义:
+$$ OR( X_1, X_2, \ldots, X_K ) \equiv WAND( X_1, w_1, \ldots , X_k, w_k, 1 ) $$
+这三个定义都比较简单，AND 很容易理解，需要所有的值都为true; OR需要只要有一个值为true就可以了。
+而WAND算法，之所以叫weak and 就是因为它的值，可以在k和1之间。至于上面的两个式子为什么是等价的，
+这个我就不说了。如果这个看不懂，这个文章还是别看了。
+## 给分
+假设使用累加模型，对于一个query q和一个doc d，score(d, q)为：
+
+$$ score(d, q) = \displaystyle \sum\_{ t \in q \cap d } \alpha_t w(t,d) $$
+
+$\alpha_t$ 为term的tf-idf, w(t,d)为tf/len(d).
+对于任何一个term, 都有一个$UB_t$，定义如下：
+$$ UB_t \ge \alpha_t max( w(t, d1), w(t,d2), \ldots ) $$
+由上面的定义可以得到：
+$$ UB( d, q ) = \displaystyle \sum_{ t \in q \cap d } UB_t \ge score( d, q ) $$
+我们基本的工作就是找到d, 满足下面的式子:
+$$ WAND(X_1, UB_1, X_2, UB_2, \ldots , X_k, UB_k, \theta ) $$
+$\theta$是一个动态的值。对于一个query，我们可以使用一个堆的数据结构，
+保存所有目前找到的top N的值，而$\theta$就可以使用堆中最小的值。
+
+## 算法实现
+初始化算法如下:
+```
+Function init( queryTerms ):
+ terms &lt;- queryTerms
+ curDoc &lt;- 0
+ for each t \in terms:
+  posting[t] &lt;- t.iterator.next(0)
+```
+对于一个queryTerms, 我们开始查询相应的文本，每一个term有一个posting的列表, 保存当前term的最大DID。
+next 大概可以分成以下三个步骤:
+```
+sort(terms, posting)
+pTerm ← findPivotTerm(terms, θ)
+pivot ← posting[pTerm].DID 以及处理
+```
+- 首先第一个，为什么对terms当前的DID进行排序呢？这样找出来的DID就是最小并且最有可能的DID吗？
+答案是正确的。我们的目的就是找到那个最小的DID，并且有可能满足 $ UD( d, q ) \ge \theta $
+因为任何一个小于pivot的DID值，相对于当前的pivot，它应该都被考虑过了。而其他term下面的DID，
+都是不可以的，因为term的tf-idf的和不能够达到要求的值。如果其他term的DID，真的有可能，那么
+它就应该在下面的term中也出现，并且排在最小的位置。
+- 第二，根据上面的理解，显然 findPivotTerm就是找到那个最小，并且最有可能的满足条件的DID。
+什么是满足条件呢？就是term的tf-idf的和比$\theta$大。
+- 第三，那这个DID这样就满足了吗？我们就可以返回了吗？显然不是。我们还要确定:
+pivot比 curDoc大，如果小，显然不行，就把前面的term中任意一个的DID调到比curDoc大
+pivot中包含所有的pivot前面的term，如果满足就可以返回了，这一点最重要，这个就是我们想要的结果。
+因为这个列表使排过序的，我们只需要判断list中第一个是不是和当前的ID相同就可以了。
+如果不满足，同上面，把前面的term中任意一个的DID调到比curDoc大
+
+## 一些优化
+- sort 并不要每次实现，只要用一个特别的数据结构，我觉得可以用红黑树之类的，每次进行删除，插入操作。
+- find 操作可以是对树的traversal，找到相应的pivot选前面的item，可以选择tf-idf最大的那个，似乎可以跳的更多一点
+threshold的设置，我个人觉得可以设置成queryTerms的tf-idf的和乘上一个系数比如0.3
+- $UB_t$的算法，其实如果你真的去算每一个值，这个值并不一定实用。有的词，在某个文章中，UB特别高，
+但在其他文章中，几乎不怎么出现。这样的UB就会有问题，论文建议使用$ UB_t = C * \alpha_t $

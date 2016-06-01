@@ -1,0 +1,181 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Calibretion算法介绍 | To Be Your Salt</title>
+
+	<meta name="author" content="Cao Nannan"> 
+	
+	<meta name="description" content="我是一个基督徒，喜欢机器学习，Linux, 编程方面的知识。目前从事点击率预估， 文字链匹配广告，以及想关的工作。 生活中，我喜欢上帝，喜欢耶稣基督，也喜欢读圣经。"> <meta name="keywords" content="">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="To Be Your Salt" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" rel="stylesheet" type="text/css">
+	
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	
+</head>
+
+
+
+<body>
+	<header id="header"><div class="inner">
+  <ul class="navigation">
+    <li><a href="/"><h1>To Be Your Salt</h1></a></li>
+    <li><a href="/" class="is-selected">Blog</a></li>
+    <li><a href="http://github.com/bigbear2017" target="blank">Github</a></li>
+  </ul>
+</div>
+</header>
+
+	<div id="content" class="inner"><article class="post">
+	<h2 class="title">Calibretion算法介绍</h2>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+
+<time datetime="2016-06-01T23:59:03+08:00" pubdate data-updated="true">Jun 1st, 2016</time></div>
+	</div>
+	<div class="entry-content"><h3>什么是Calibretion?</h3>
+
+<p>在进行点击率预估的过程中，我们发现这样一个现象。把所有点击率按照从小到大排序，然后每1000个点击，计算copc（clicks over predicted clicks ），得到分段copc。如下图：
+<img src="http://t73-1.yunpan.360.cn/p1/800-600.4794934e3b4ab0d54346ab0b0331a876dd454936_shbt_73_shbt1_t.32db54.jpg?st=0M-QMYjFUqd6i16yrMOgCw&amp;e=1464883200&amp;mt=" alt="copc1" />
+从上面的图，我们可以看到这样一个情况，在整条的曲线上，我们都会看到有时高估，有时低估。尤其在曲线的尾部，高估的严重，我们预估有10个点击，估计也就有3个点击左右。所以，我们需要进行矫正，让整条曲线都在1附近。</p>
+
+<h3>如何矫正</h3>
+
+<p>在进行矫正的时候，我们需要满足这样的条件:</p>
+
+<ol>
+<li>不可以改变目前预估的排序，因为如果改变了预估的排序，那么整个曲线的auc就会发生变化。</li>
+<li>保证矫正以后的copc在1附近。这样我们矫正才有意义。</li>
+</ol>
+
+
+<p>解决的方式是我们使用Isotonic Regression 进行矫正。保序回归，刚刚好满足上面的要求。</p>
+
+<h3>什么是保序回归</h3>
+
+<p>简单地来说，保序回归的意思是这样，对于任意$n$个点$(a_1, a_2, &hellip;, a_n)$, 找到n个点$(x_1, x_2, &hellip; , x_n)$，使得$\sum_{i=1}^n (x_i - a_i)^2$最小，并且对于任意的$i > j$，我们有$x_i \ge x_j$。比如下图中有100个点，从1到100个红色的点，蓝色是用linear regression解出来的线，绿色是保序回归解出来的线。
+<img src="http://fa.bianp.net/blog/static/images/2013/plot_isotonic_regression_1.png" alt="isotonic-regression" /></p>
+
+<h3>PAVA (Pool Adjacent Violation Algorithm)算法</h3>
+
+<p>为了解决上面的问题，有人提出了PAVA算法。简单地来说，检查相邻两个block，还不能达到单调递增的状态，那么就将这两个block放在一起，合并成一个大的block。再对这个block，进行求解，之后递归上面的操作。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>merge all values into blocks
+</span><span class='line'>solve each block, 
+</span><span class='line'>if the condition is not satisfied, repeat step 1 </span></code></pre></td></tr></table></div></figure>
+
+
+<p>用伪代码翻译下，可以得到下面这样的结果</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>输入: $ {(x_i, y_i)} $， 其中$x_i$为index，$y_i$为value
+</span><span class='line'>sort( {x_i, y_i} ) according to $x_i$
+</span><span class='line'>for each record (x_i, x_i, y_i) R
+</span><span class='line'>  merge Record R into RecordList L
+</span><span class='line'>
+</span><span class='line'>def  mergeList( record R, recordList L ) :
+</span><span class='line'>    if L is empty:
+</span><span class='line'>      insert R to L and return
+</span><span class='line'>    get last record LR
+</span><span class='line'>    if LR.value &lt; R.value:
+</span><span class='line'>      return 
+</span><span class='line'>    else:
+</span><span class='line'>       remove LR from L
+</span><span class='line'>       merge LR and  R to Rnew
+</span><span class='line'>       mergeList( Rnew, L )</span></code></pre></td></tr></table></div></figure>
+
+
+<p>PAVA 算法非常快，只需要O(n)的时间就好了，也非常有效。</p>
+
+<h4>算法演示:</h4>
+
+<p><img src="http://t73-2.yunpan.360.cn/p1/800-600.c05c5673737e19d4e1ff3ccfefe7507608fed9de_shbt_73_shbt1_t.767a8f.jpg?st=lsTpUnevVk9k-hVA1is0Ig&amp;e=1464883200&amp;mt=" alt="pava-gif" /></p>
+
+<h3>纠正后的效果</h3>
+
+<p>如下图:
+<img src="http://t73-4.yunpan.360.cn/p1/800-600.906e4dcb81aa17364f67a8cc8f940a0c142e918a_shbt_73_shbt1_t.024773.jpg?st=LXbLNtEHkGA7cYOYDC8e_Q&amp;e=1464883200&amp;mt=" alt="copc2" />
+从上图，我们可以看到，整个曲线都在1附近。</p>
+</div>
+
+
+<div class="sharing">
+  
+  
+  
+</div>
+</article>
+</div>
+	<footer id="footer" class="inner"><script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({
+	tex2jax: {
+		inlineMath: [ ['$','$'] ],
+		displayMath: [ ['$$','$$'] ],
+	},
+	processEscapes: true
+});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+<div class="aboutme">
+<hr>
+  <div class="profile">
+    <a href="http://twitter.com/"><img class="icon" src=""></a>
+
+    <h3>Cao Nannan</h3>
+    <p><a href="http://twitter.com/">@</a></p>
+
+    <div class="codes">
+      <h4>Codes</h4>
+      <div class="github"><a href="https://github.com/bigbear2017">github.com/bigbear2017</a></div>
+    </div>
+  </div>
+
+  <div class="float_clear"></div>
+
+</div>
+Copyright &copy; 2016
+ Cao Nannan 
+<br>
+Powered by Octopress.
+
+
+
+</footer>
+	
+
+</body>
+</html>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 信息检索 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/xin-xi-jian-suo/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-06-02T00:08:31+08:00</updated>
+  <updated>2016-06-02T23:04:40+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -18,7 +18,9 @@
     <link href="http://bigbear2017.github.io/blog/2014/08/14/wandsuan-fa-jie-shao/"/>
     <updated>2014-08-14T20:43:21+08:00</updated>
     <id>http://bigbear2017.github.io/blog/2014/08/14/wandsuan-fa-jie-shao</id>
-    <content type="html"><![CDATA[<p>本文主要介绍了WAND算法的思想，以及算法中我们会想到的一些问题。
+    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
+
+<p>本文主要介绍了WAND算法的思想，以及算法中我们会想到的一些问题。
 WAND算法主要应用于query匹配，它可以对短query或者长query实现模糊匹配，
 并且效率和效果都很好。在搜索引擎和广告投放中都有很好的应用。</p>
 

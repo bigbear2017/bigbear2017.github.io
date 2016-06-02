@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 指标 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/zhi-biao/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-06-02T00:08:31+08:00</updated>
+  <updated>2016-06-02T23:04:40+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -18,7 +18,9 @@
     <link href="http://bigbear2017.github.io/blog/2015/07/24/auc-copczhi-biao-jie-shao/"/>
     <updated>2015-07-24T20:56:45+08:00</updated>
     <id>http://bigbear2017.github.io/blog/2015/07/24/auc-copczhi-biao-jie-shao</id>
-    <content type="html"><![CDATA[<h3>AUC</h3>
+    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
+
+<h3>AUC</h3>
 
 <p>AUC 的全称是Area Under Curve，简单的来说就是<strong><em>计算某条线以下的面积</em></strong>。说起AUC，就不得不说ROC（Receiver Operating Characteristic）曲线。计算ROC曲线，我们需要知道两个名词：true positive rate 和 false positive rate。这两个值的计算很简单，比如有10个样本，有7个是正例，3个是负例。那当我们假设都是positive的时候，tpr是0.7，fpr是0.3。那如何计算AUC呢？</p>
 

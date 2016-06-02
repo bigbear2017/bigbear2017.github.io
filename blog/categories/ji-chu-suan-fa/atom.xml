@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 基础算法 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/ji-chu-suan-fa/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-06-02T00:08:31+08:00</updated>
+  <updated>2016-06-02T23:04:40+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -18,7 +18,9 @@
     <link href="http://bigbear2017.github.io/blog/2015/11/24/gradientboostingsuan-fa-jie-shao/"/>
     <updated>2015-11-24T23:45:10+08:00</updated>
     <id>http://bigbear2017.github.io/blog/2015/11/24/gradientboostingsuan-fa-jie-shao</id>
-    <content type="html"><![CDATA[<h3>算法介绍</h3>
+    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
+
+<h3>算法介绍</h3>
 
 <p>由AdaBoosting算法，我们知道了什么是Boosting算法，算法大概的结构如下:</p>
 
@@ -111,7 +113,9 @@ y - G(x)                 &amp; \textrm{for} |y - G(x)| \le \delta, \\\
     <link href="http://bigbear2017.github.io/blog/2015/09/27/adaboostingsuan-fa-jie-shao/"/>
     <updated>2015-09-27T21:41:04+08:00</updated>
     <id>http://bigbear2017.github.io/blog/2015/09/27/adaboostingsuan-fa-jie-shao</id>
-    <content type="html"><![CDATA[<p>Boosting 是一种很有意思的算法。在没有SVM之前，今天就让我们来一同回顾一下这个经典的算法吧。</p>
+    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
+
+<p>Boosting 是一种很有意思的算法。在没有SVM之前，今天就让我们来一同回顾一下这个经典的算法吧。</p>
 
 <h2>1. 模型定义</h2>
 
@@ -175,7 +179,9 @@ else $\omega_i = \omega_i * \frac{1- err_m}{err_m}$</p></blockquote></li>
     <link href="http://bigbear2017.github.io/blog/2015/06/22/neronnetworksuan-fa-jie-shao/"/>
     <updated>2015-06-22T20:05:00+08:00</updated>
     <id>http://bigbear2017.github.io/blog/2015/06/22/neronnetworksuan-fa-jie-shao</id>
-    <content type="html"><![CDATA[<p>最近深度学习实在太火了，火到各个公司都在搞实验室。但是深度学习的基础，还是从neron network，BP，这样的算法开始。
+    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
+
+<p>最近深度学习实在太火了，火到各个公司都在搞实验室。但是深度学习的基础，还是从neron network，BP，这样的算法开始。
 就简单回顾一下最简单的NN吧。</p>
 
 <h3>1. 算法介绍</h3>
@@ -234,7 +240,9 @@ $$</p>
     <link href="http://bigbear2017.github.io/blog/2015/05/22/svmjian-dan-jie-shao/"/>
     <updated>2015-05-22T19:35:43+08:00</updated>
     <id>http://bigbear2017.github.io/blog/2015/05/22/svmjian-dan-jie-shao</id>
-    <content type="html"><![CDATA[<p>在没有深度学习之前，SVM非常火。最近似乎很少有人再用svm了，不过还是让我们来回顾一下这个经典的算法吧。</p>
+    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
+
+<p>在没有深度学习之前，SVM非常火。最近似乎很少有人再用svm了，不过还是让我们来回顾一下这个经典的算法吧。</p>
 
 <h3>1. Perceptron</h3>
 
@@ -324,7 +332,9 @@ $$</p>
     <link href="http://bigbear2017.github.io/blog/2014/09/12/newton-method/"/>
     <updated>2014-09-12T21:49:55+08:00</updated>
     <id>http://bigbear2017.github.io/blog/2014/09/12/newton-method</id>
-    <content type="html"><![CDATA[<p>本文主要介绍Newton Method，BFGS, LBFGS 算法，最重要的是算法推导的过程，以及这三个算法的比较。</p>
+    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
+
+<p>本文主要介绍Newton Method，BFGS, LBFGS 算法，最重要的是算法推导的过程，以及这三个算法的比较。</p>
 
 <h2>Newton Method</h2>
 

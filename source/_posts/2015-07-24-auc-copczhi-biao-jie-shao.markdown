@@ -5,6 +5,8 @@ date: 2015-07-24 20:56:45 +0800
 comments: true
 categories: 机器学习 指标
 ---
+##### 版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。
+
 
 ### AUC
 
@@ -24,13 +26,13 @@ AUC 的全称是Area Under Curve，简单的来说就是***计算某条线以下
 
 假如有20个样本, 把样本的预测值从大到小排序，如下图:
 
-![sortP](https://img3.doubanio.com/view/note/large/public/p8947351.jpg)
+![sortP](http://7xv0xu.com1.z0.glb.clouddn.com/auc1.jpg)
 
 
 
 那么我们把上面划分成20等分，计算每一个等分上的TPR和FPR，然后画出下面的图:
 
-![imageP](https://img3.doubanio.com/view/note/large/public/p8947352.jpg)
+![imageP](http://7xv0xu.com1.z0.glb.clouddn.com/auc2.jpg)
 
 这样我们就可以计算 AUC = 0.1 x 0.2 + 0.2 x 0.5 + 0.1 x 0.6 + 0.1 x 0.7 + 0.3 x 0.8 + 0.1 * 0.9 + 0.1 * 1 = 0.02 + 0.1 + 0.06 + 0.07 + 0.24 + 0.09 + 0.1 = 0.68
 

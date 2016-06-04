@@ -5,6 +5,9 @@ date: 2015-03-21 21:57:32 +0800
 comments: true
 categories: framework tools
 ---
+##### 版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。 
+
+
 <!--moreThrift是Facebook开源的一个框架，用来定义数据结构和服务。作为开发者，只要按照格式定义
 数据文件，thrift就可以直接生成相应的代码。-->
 ## 什么是Thrift

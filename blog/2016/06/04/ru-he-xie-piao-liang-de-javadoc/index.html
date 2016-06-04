@@ -1,0 +1,250 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>如何写漂亮的JavaDoc | To Be Your Salt</title>
+
+	<meta name="author" content="Cao Nannan"> 
+	
+	<meta name="description" content="我是一个基督徒，喜欢机器学习，Linux, 编程方面的知识。目前从事点击率预估， 文字链匹配广告，以及想关的工作。 生活中，我喜欢上帝，喜欢耶稣基督，也喜欢读圣经。"> <meta name="keywords" content="">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="To Be Your Salt" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" rel="stylesheet" type="text/css">
+	
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	
+</head>
+
+
+
+<body>
+	<header id="header"><div class="inner">
+  <ul class="navigation">
+    <li><a href="/"><h1>To Be Your Salt</h1></a></li>
+    <li><a href="/" class="is-selected">Blog</a></li>
+    <li><a href="http://github.com/bigbear2017" target="blank">Github</a></li>
+  </ul>
+</div>
+</header>
+
+	<div id="content" class="inner"><article class="post">
+	<h2 class="title">如何写漂亮的JavaDoc</h2>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+
+<time datetime="2016-06-04T16:08:14+08:00" pubdate data-updated="true">Jun 4th, 2016</time></div>
+	</div>
+	<div class="entry-content"><h5>版权声明：本文所有内容都是原创，如有转发请注明出处，谢谢。</h5>
+
+<p>注释在编程中，非常的重要。一个好的注释，是我们有好的编程习惯的基础。JavaDoc很简单，只要稍微注意几个点，我们就可以写出很好看的doc。这样我们的编程能力，至少看起来会好很多。</p>
+
+<h3>一个简单的例子:</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/**
+</span><span class='line'> * Returns an Image object that can then be painted on the screen. 
+</span><span class='line'> * The url argument must specify an absolute {@link URL}. The name
+</span><span class='line'> * argument is a specifier that is relative to the url argument. 
+</span><span class='line'> * &lt;p&gt;
+</span><span class='line'> * This method always returns immediately, whether or not the 
+</span><span class='line'> * image exists. When this applet attempts to draw the image on
+</span><span class='line'> * the screen, the data will be loaded. The graphics primitives 
+</span><span class='line'> * that draw the image will incrementally paint on the screen. 
+</span><span class='line'> *
+</span><span class='line'> * @param  url  an absolute URL giving the base location of the image
+</span><span class='line'> * @param  name the location of the image, relative to the url argument
+</span><span class='line'> * @return      the image at the specified URL
+</span><span class='line'> * @see         Image
+</span><span class='line'> */
+</span><span class='line'> public Image getImage(URL url, String name) {
+</span><span class='line'>        try {
+</span><span class='line'>            return getImage(new URL(url, name));
+</span><span class='line'>        } catch (MalformedURLException e) {
+</span><span class='line'>            return null;
+</span><span class='line'>        }
+</span><span class='line'> }</span></code></pre></td></tr></table></div></figure>
+
+
+<p>From this <a href="http://www.oracle.com/technetwork/articles/java/index-137868.html">How To Wrte JavaDoc</a>。几个比较重要的点有：</p>
+
+<h3>段落注释</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>段落分行: &lt;p&gt;
+</span><span class='line'> 
+</span><span class='line'>列表: 
+</span><span class='line'>&lt;ul&gt;
+</span><span class='line'>  &lt;li&gt; point 1
+</span><span class='line'>  &lt;li&gt; point 2
+</span><span class='line'>&lt;/ul&gt; 
+</span><span class='line'>
+</span><span class='line'>分行: &lt;br&gt;
+</span><span class='line'>
+</span><span class='line'>插入代码:
+</span><span class='line'>Class Usage: 
+</span><span class='line'>&lt;code&gt; 
+</span><span class='line'> import org.apache.Example
+</span><span class='line'>&lt;/code&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>参数注释</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>@author (classes and interfaces only, required)        
+</span><span class='line'>@version (classes and interfaces only, required.   
+</span><span class='line'>@param (methods and constructors only)        
+</span><span class='line'>@return (methods only)        
+</span><span class='line'>@exception (@throws is a synonym added in Javadoc 1.2)        
+</span><span class='line'>@see  
+</span><span class='line'>@since  
+</span><span class='line'>@serial (or @serialField or @serialData)        
+</span><span class='line'>@deprecated </span></code></pre></td></tr></table></div></figure>
+
+
+<h3>链接注释 用于@SEE</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>@see #field 
+</span><span class='line'>@see #Constructor(Type, Type...) 
+</span><span class='line'>@see #Constructor(Type id, Type id...) 
+</span><span class='line'>@see #method(Type, Type,...) 
+</span><span class='line'>@see #method(Type id, Type, id...) 
+</span><span class='line'>@see Class 
+</span><span class='line'>@see Class#field
+</span><span class='line'>@see Class#Constructor(Type, Type...) 
+</span><span class='line'>@see Class#Constructor(Type id, Type id) 
+</span><span class='line'>@see Class#method(Type, Type,...) 
+</span><span class='line'>@see Class#method(Type id, Type id,...) 
+</span><span class='line'>@see package.Class 
+</span><span class='line'>@see package.Class#field 
+</span><span class='line'>@see package.Class#Constructor(Type, Type...) 
+</span><span class='line'>@see package.Class#Constructor(Type id, Type id) 
+</span><span class='line'>@see package.Class#method(Type, Type,...) 
+</span><span class='line'>@see package.Class#method(Type id, Type, id) 
+</span><span class='line'>@see package </span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+<div class="sharing">
+  
+  
+  
+</div>
+</article>
+</div>
+	<footer id="footer" class="inner"><script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({
+	tex2jax: {
+		inlineMath: [ ['$','$'] ],
+		displayMath: [ ['$$','$$'] ],
+	},
+	processEscapes: true
+});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+<div class="aboutme">
+<hr>
+  <div class="profile">
+    <a href="http://twitter.com/"><img class="icon" src=""></a>
+
+    <h3>Cao Nannan</h3>
+    <p><a href="http://twitter.com/">@</a></p>
+
+    <div class="codes">
+      <h4>Codes</h4>
+      <div class="github"><a href="https://github.com/bigbear2017">github.com/bigbear2017</a></div>
+    </div>
+  </div>
+
+  <div class="float_clear"></div>
+
+</div>
+Copyright &copy; 2016
+ Cao Nannan 
+<br>
+Powered by Octopress.
+
+
+
+</footer>
+	
+
+</body>
+</html>

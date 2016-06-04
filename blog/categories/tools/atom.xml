@@ -4,7 +4,7 @@
   <title><![CDATA[Category: tools | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/tools/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-06-04T14:34:31+08:00</updated>
+  <updated>2016-06-04T16:15:28+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -12,6 +12,104 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[如何写漂亮的JavaDoc]]></title>
+    <link href="http://bigbear2017.github.io/blog/2016/06/04/ru-he-xie-piao-liang-de-javadoc/"/>
+    <updated>2016-06-04T16:08:14+08:00</updated>
+    <id>http://bigbear2017.github.io/blog/2016/06/04/ru-he-xie-piao-liang-de-javadoc</id>
+    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转发请注明出处，谢谢。</h5>
+
+<p>注释在编程中，非常的重要。一个好的注释，是我们有好的编程习惯的基础。JavaDoc很简单，只要稍微注意几个点，我们就可以写出很好看的doc。这样我们的编程能力，至少看起来会好很多。</p>
+
+<h3>一个简单的例子:</h3>
+
+<pre><code>/**
+ * Returns an Image object that can then be painted on the screen. 
+ * The url argument must specify an absolute {@link URL}. The name
+ * argument is a specifier that is relative to the url argument. 
+ * &lt;p&gt;
+ * This method always returns immediately, whether or not the 
+ * image exists. When this applet attempts to draw the image on
+ * the screen, the data will be loaded. The graphics primitives 
+ * that draw the image will incrementally paint on the screen. 
+ *
+ * @param  url  an absolute URL giving the base location of the image
+ * @param  name the location of the image, relative to the url argument
+ * @return      the image at the specified URL
+ * @see         Image
+ */
+ public Image getImage(URL url, String name) {
+        try {
+            return getImage(new URL(url, name));
+        } catch (MalformedURLException e) {
+            return null;
+        }
+ }
+</code></pre>
+
+<p>From this <a href="http://www.oracle.com/technetwork/articles/java/index-137868.html">How To Wrte JavaDoc</a>。几个比较重要的点有：</p>
+
+<h3>段落注释</h3>
+
+<p>```
+段落分行: <p></p>
+
+<p>列表:</p>
+
+<ul>
+  <li> point 1
+  <li> point 2
+</ul>
+
+
+<p></p>
+
+<p>分行: <br></p>
+
+<p>插入代码:
+Class Usage:
+<code>
+ import org.apache.Example
+</code>
+```</p>
+
+<h3>参数注释</h3>
+
+<pre><code>@author (classes and interfaces only, required)        
+@version (classes and interfaces only, required.   
+@param (methods and constructors only)        
+@return (methods only)        
+@exception (@throws is a synonym added in Javadoc 1.2)        
+@see  
+@since  
+@serial (or @serialField or @serialData)        
+@deprecated 
+</code></pre>
+
+<h3>链接注释 用于@SEE</h3>
+
+<pre><code>@see #field 
+@see #Constructor(Type, Type...) 
+@see #Constructor(Type id, Type id...) 
+@see #method(Type, Type,...) 
+@see #method(Type id, Type, id...) 
+@see Class 
+@see Class#field
+@see Class#Constructor(Type, Type...) 
+@see Class#Constructor(Type id, Type id) 
+@see Class#method(Type, Type,...) 
+@see Class#method(Type id, Type id,...) 
+@see package.Class 
+@see package.Class#field 
+@see package.Class#Constructor(Type, Type...) 
+@see package.Class#Constructor(Type id, Type id) 
+@see package.Class#method(Type, Type,...) 
+@see package.Class#method(Type id, Type, id) 
+@see package 
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Find 学习笔记]]></title>

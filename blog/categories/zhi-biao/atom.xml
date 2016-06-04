@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 指标 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/zhi-biao/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-06-02T23:04:40+08:00</updated>
+  <updated>2016-06-04T14:34:31+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -36,11 +36,11 @@
 
 <p>假如有20个样本, 把样本的预测值从大到小排序，如下图:</p>
 
-<p><img src="https://img3.doubanio.com/view/note/large/public/p8947351.jpg" alt="sortP" /></p>
+<p><img src="http://7xv0xu.com1.z0.glb.clouddn.com/auc1.jpg" alt="sortP" /></p>
 
 <p>那么我们把上面划分成20等分，计算每一个等分上的TPR和FPR，然后画出下面的图:</p>
 
-<p><img src="https://img3.doubanio.com/view/note/large/public/p8947352.jpg" alt="imageP" /></p>
+<p><img src="http://7xv0xu.com1.z0.glb.clouddn.com/auc2.jpg" alt="imageP" /></p>
 
 <p>这样我们就可以计算 AUC = 0.1 x 0.2 + 0.2 x 0.5 + 0.1 x 0.6 + 0.1 x 0.7 + 0.3 x 0.8 + 0.1 * 0.9 + 0.1 * 1 = 0.02 + 0.1 + 0.06 + 0.07 + 0.24 + 0.09 + 0.1 = 0.68</p>
 

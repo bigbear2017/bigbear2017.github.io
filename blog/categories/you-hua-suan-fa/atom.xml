@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 优化算法 | To Be Your Salt]]></title>
+  <link href="http://bigbear2017.github.io/blog/categories/you-hua-suan-fa/atom.xml" rel="self"/>
+  <link href="http://bigbear2017.github.io/"/>
+  <updated>2016-06-07T00:21:03+08:00</updated>
+  <id>http://bigbear2017.github.io/</id>
+  <author>
+    <name><![CDATA[Cao Nannan]]></name>
+    <email><![CDATA[sei_michael@126.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[OWL-QN算法介绍]]></title>
+    <link href="http://bigbear2017.github.io/blog/2016/06/07/owl-qnsuan-fa-jie-shao/"/>
+    <updated>2016-06-07T00:08:56+08:00</updated>
+    <id>http://bigbear2017.github.io/blog/2016/06/07/owl-qnsuan-fa-jie-shao</id>
+    <content type="html"><![CDATA[<h3>算法引言</h3>
+
+<p>我们之前介绍了Logistic Regression。通常情况下，对LR进行正则化，我们都会使用L2 norm，因为求导比较简单。但是L1 norm 相对于L2 norm有2个好处：</p>
+
+<ol>
+<li>当很多的特征都不相关，我们仍然可以训练出一个好的模型（Ng 2004）</li>
+<li>生成的模型，大多数的参数都是0。后面我们会知道这是为什么。</li>
+</ol>
+
+
+<p>第二个条件对很多线上的任务，是一个非常好的属性。因为很多没必要的参数为0，就可以显著的减少线上的计算量。如果是使用L2 norm，大多数的参数都会是接近于0，比如0.004，虽然很小，但是还是要计算这一位的值。</p>
+
+<p>假设我们的参数为$x \in R^p$, 如果我们了解L1 Norm，我们就知道我们需要minimize 的函数如下:</p>
+
+<p>$$f(x) = \ell(x) + r(x) =  \ell(x) + C \sum_{i=1}^{p} |x_i|$$
+其中$\ell(x)$是negative loglikelihood。很明显，这个函数不可导。我们连一阶导数都没办法求出来，更别提二阶导数了。所以，我们是不可能用剃度下降或者牛顿法等等。</p>
+
+<h3>算法思想</h3>
+
+<p>作者是怎么想出来OWL-QN(orthant-wise Limited-memory Quasi-Newton)呢？主要的想法是这样的：</p>
+
+<p><em>如果限制到某一个单一象限，上面的$f(x)$就是可导的。并且呢，他还是与 $r(x)$是线性相关的。因此, $r(x)$的那部分，在二阶导数的时候就为0。这也就是说，f(x)在二阶导数上，只与$\ell(x)$有关，与$r(x)$无关。</em></p>
+
+<p>这样的话，于是我们就有了这样的想法：</p>
+
+<ul>
+<li>构造一个接近的二次函数，这个接近的意思是，在某个象限内和原函数是一致的</li>
+<li>对构造的二次函数，利用Hessian Matrix，找到下降的梯度方向</li>
+<li>根据梯度方向，进行受限制的线性搜索，受限制的线性搜索的意思是与原来的$x$的象限一致</li>
+</ul>
+
+
+<p>首先，我们可以构造下面一个函数:
+$$ f(x) = \ell(x) + C\xi ^T x $$
+其中$\xi_i$和$x_i$同号，并且$\xi_i \in { 1, 0, -1 }$。这样，这个方程和原来的方程的值，在不变象限的情况下，值是一样的。并且关键的是，现在这个方程，是可导的，可导的。这太美了，可以求极值了。我们就利用这个方程，找到梯度下降的方向。然后进行受限制的线性搜索。</p>
+
+<h4>确定导数</h4>
+
+<p>在确定梯度方向的时候，我们还是要确定函数的一阶导数。对于$x_i \ne 0$，这个很好办，方程是可导，我们可以得到$\partial_i f(x) = \frac{\partial }{\partial x_i}\ell + C\sigma(x_i)$。但是对于$x_i = 0$的情况，就比较麻烦，因为这个时候，方程是不可导的。方程的偏导数定义如下:
+$$ \partial_i^{\pm} f(x) = \frac{\partial}{\partial x_i} \ell \pm C $$
+根据上面的定义，右导数一定比左导数大。如果左偏导和右偏导符号一样，那么我们就选择那个比较小的。如果符号不同，那么就为0。定义如下：
+$$\partial_i f(x)  = \begin{cases}
+\partial_i^{-} f(x), if \partial^{-}f(x) \gt 0 \\\
+\partial_i^{+} f(x), if \partial^{+}f(x) \lt 0 \\\
+0, \text{otherwise}
+\end{cases}$$</p>
+
+<h4>确定$\zeta$</h4>
+
+<p>首先，我们知道$\zeta$和$x$是同符号的。所以对于$x_i \ne 0$的时候，我们知道是和$x_i$一样的符号。但是$x_i = 0$的时候，我们怎么办呢？想到line search是加上负梯度方向来的，我们就取负梯度的方向。所以，$\zeta$定义如下：
+$$\zeta_i^{k} = \begin{cases}
+\sigma(x^k_i), if x_i^k \ne 0 \\\
+\sigma(- \partial_i f(x)), if x_i^k = 0
+\end{cases} $$</p>
+
+<h4>受限制的线性搜索</h4>
+
+<p>我们需要保证line search 是在同一个象限的。也就是说，如果是在同一象限，我们就保留，如果不在同一象限就取$0$。定义如下:</p>
+
+<p>$$ x^{k+1} = \pi( x^k + \alpha p^k, \zeta^k) $$</p>
+
+<h3>算法合并</h3>
+
+<blockquote><p>Algorithm OWL-QN
+chose initial point $x<sup>0</sup>$</p>
+
+<p>S = {}, Y = {}</p>
+
+<p>for k = 0 to maxIters do</p>
+
+<p>&mdash;Compute $v^k = - \partial f(x)$</p>
+
+<p>&mdash;Compute $d^k = H_k v^k$ using S and Y</p>
+
+<p>&mdash;$p^k = \pi ( d^k, v^k )$</p>
+
+<p>&mdash;Find $x^{k+1}$ with constraned line search</p>
+
+<p>&mdash;If termination satisfied return $x^{k+1}$ end if</p>
+
+<p>&mdash;update S with $s^k = x^{k+1} - x^{k}$</p>
+
+<p>&mdash;update Y with $y^k = \partial \ell(x^{k+1}) - \partial \ell(x^k)$</p>
+
+<p>end for</p></blockquote>
+
+<p>这里有一步，我们没有进行解释，就是$p^k = \pi ( d^k, v^k )$保留了吧，这个文章里面有注释。</p>
+
+<h3>算法讨论</h3>
+
+<p>我觉得理解这个算法，主要是抓住一个点。就是$|x|$这个函数，在一个象限里面是可导的，连续的。只有在$0$点，那个位置才是不可导的。所以，我们线性搜索的时候，并不是直接根据梯度，而是受限制的梯度下降。如下图，我们不是要跨象限，而是只到$0$。这样，我们大多数的参数也都变成了0。
+<img src="http://7xv0xu.com1.z0.glb.clouddn.com/absx.jpg" alt="abs" /></p>
+
+<h3>参考论文:</h3>
+
+<p><a href="http://www.machinelearning.org/proceedings/icml2007/papers/449.pdf">Scalable Training of L1-Regularized Log-Linear Models</a></p>
+]]></content>
+  </entry>
+  
+</feed>

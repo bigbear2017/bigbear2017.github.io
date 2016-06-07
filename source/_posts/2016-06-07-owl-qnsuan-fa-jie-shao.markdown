@@ -64,19 +64,19 @@ $$ x\^{k+1} = \pi( x\^k + \alpha p\^k, \zeta\^k) $$
 >
 >for k = 0 to maxIters do
 >
->---Compute $v\^k = - \partial f(x)$
->
->---Compute $d\^k = H_k v\^k$ using S and Y
->
->---$p\^k = \pi ( d\^k, v\^k )$
->
->---Find $x\^{k+1}$ with constraned line search
->
->---If termination satisfied return $x\^{k+1}$ end if
->
->---update S with $s\^k = x^{k+1} - x^{k}$
->
->---update Y with $y\^k = \partial \ell(x\^{k+1}) - \partial \ell(x\^k)$
+>> Compute $v\^k = - \partial f(x)$
+>>
+>> Compute $d\^k = H_k v\^k$ using S and Y
+>>
+>> $p\^k = \pi ( d\^k, v\^k )$
+>>
+>> Find $x\^{k+1}$ with constraned line search
+>>
+>> If termination satisfied return $x\^{k+1}$ end if
+>>
+>> update S with $s\^k = x^{k+1} - x^{k}$
+>>
+>> update Y with $y\^k = \partial \ell(x\^{k+1}) - \partial \ell(x\^k)$
 >
 >end for
 > 

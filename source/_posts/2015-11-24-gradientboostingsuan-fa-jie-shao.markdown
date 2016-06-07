@@ -24,13 +24,13 @@ $$ G(x) = \sum_{i = 1}^{M} \alpha_i g_i( x ) $$
 
 >for j = 1 to M
 
->- $ r\_{ji} = ( y_i - G\_{j-1}(x_i) ) $ //r_j should be a vector, size of N
+>> $ r\_{ji} = ( y_i - G\_{j-1}(x_i) ) $ //r_j should be a vector, size of N
 
->- fit $g\_j(x)$ to $r_j$ 
+>> fit $g\_j(x)$ to $r_j$ 
 
->- $\alpha\_j = \arg \min\_{\alpha} \sum\_{i = 1}^n L( y_i, G\_{j-1} ( x_i ) + \alpha * g_j(x_i) )  $
+>> $\alpha\_j = \arg \min\_{\alpha} \sum\_{i = 1}^n L( y_i, G\_{j-1} ( x_i ) + \alpha * g_j(x_i) )  $
 
->- $G_j(x) = G_{j-1}(x) + \alpha_j g_j(x) $
+>> $G_j(x) = G_{j-1}(x) + \alpha_j g_j(x) $
 
 
 ##### 2. 使用Gradient 
@@ -72,18 +72,18 @@ y - G(x)                 & \textrm{for} |y - G(x)| \le \delta, \\\\\\
 
 #### 算法过程
 > Input: training set $\{(x_i, y_i)\_{i=1}\^n\}$
-
+>
 > 初始化learner function $G_0$为常数
-
+>
 > for j = 1 to M
-
->  '  '  $ r\_{ji} = -\frac{\partial L} {\partial G\_{j-1}(x_i)} $ //$r\_j$ should be a vector, size of N
-
->  '  '  fit $g_j(x)$ to $r_j$
-
->  '  '  $\alpha_j = \arg \min\_{\alpha} \sum\_{i = 1}\^n L( y_i, G_{j-1} ( x_i ) + \alpha * g_j(x_i) )  $
-
->  '  '  $G_j(x) = G_{j-1}(x) + \alpha_j g_j(x) $
+>
+>> $ r\_{ji} = -\frac{\partial L} {\partial G\_{j-1}(x_i)} $ //$r\_j$ should be a vector, size of N
+>>
+>> fit $g_j(x)$ to $r_j$
+>>
+>> $\alpha_j = \arg \min\_{\alpha} \sum\_{i = 1}\^n L( y_i, G_{j-1} ( x_i ) + \alpha * g_j(x_i) )  $
+>>
+>> $G_j(x) = G_{j-1}(x) + \alpha_j g_j(x) $
 
 初始化learner function $F_0$为常数
 计算negative gradient

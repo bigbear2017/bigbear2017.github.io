@@ -24,11 +24,12 @@ Algorithm AdaBoost
 
 >1.  Initialize  $ \omega_i = \frac{1}{N} $,  i = 1, 2, ... N
 >2. For m = 1 to M:
-> - (a) Fit a classifier G(x) to training data using weights $\omega_i$
-> - (b)Compute 
-> - $$ err_m = \frac{\sum\_{i=1}^{N} \omega_m I( y_i \ne G_m(x))} {\sum\_{i = 1}^{N} \omega_i}  $$
-> - (c) Compute $ \alpha_m = \log(\frac{( 1 - err_m)} {err_m} ) $
-> - (d) Update $\omega_i  = \omega_i \exp(\alpha_m I( y_i \ne G_m(x_i) )$
+>> Fit a classifier G(x) to training data using weights $\omega_i$
+>>
+>> Compute 
+>> $$ err_m = \frac{\sum\_{i=1}^{N} \omega_m I( y_i \ne G_m(x))} {\sum\_{i = 1}^{N} \omega_i}  $$
+>> Compute $ \alpha_m = \log(\frac{( 1 - err_m)} {err_m} ) $
+>> Update $\omega_i  = \omega_i \exp(\alpha_m I( y_i \ne G_m(x_i) )$
 >3. Output  $ G(x) = sign[ \sum_{m=1}^{M} \alpha_m G_m(x) ] $
 
 ## 3. 算法解读
@@ -49,6 +50,7 @@ err_m =  \frac{1}{1 + \exp^{\alpha}} \\\\
 2. 为什么每次要更新$\omega_i$ ?
 对于 $\omega_i$ 的更新，我们可以进行这样的解读:
 >if $y_i == G(x_i)$ $\omega_i == \omega_i$
+>
 >else $\omega_i = \omega_i * \frac{1- err_m}{err_m}$ 
 
 对于 $\frac{1- err_m}{err_m}$，我们知道$err_m$越大，值越小。也就是说，错误率越高，我们的就权重越低。这是可以理解的，如果$err_m$很大，说明分类器不好。被这样一个分类器给分错了，那我们可能觉得没关系。但是如果$err_m$很小，说明分类器很好，被一个很好的分类器分错了，说明这个点，我们希望在下次的时候，可以被其他的分类器补充。

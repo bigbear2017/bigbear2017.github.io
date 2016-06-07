@@ -120,19 +120,19 @@ chose initial point $x<sup>0</sup>$</p>
 
 <p>for k = 0 to maxIters do</p>
 
-<p>&mdash;Compute $v^k = - \partial f(x)$</p>
+<blockquote><p>Compute $v^k = - \partial f(x)$</p>
 
-<p>&mdash;Compute $d^k = H_k v^k$ using S and Y</p>
+<p>Compute $d^k = H_k v^k$ using S and Y</p>
 
-<p>&mdash;$p^k = \pi ( d^k, v^k )$</p>
+<p>$p^k = \pi ( d^k, v^k )$</p>
 
-<p>&mdash;Find $x^{k+1}$ with constraned line search</p>
+<p>Find $x^{k+1}$ with constraned line search</p>
 
-<p>&mdash;If termination satisfied return $x^{k+1}$ end if</p>
+<p>If termination satisfied return $x^{k+1}$ end if</p>
 
-<p>&mdash;update S with $s^k = x^{k+1} - x^{k}$</p>
+<p>update S with $s^k = x^{k+1} - x^{k}$</p>
 
-<p>&mdash;update Y with $y^k = \partial \ell(x^{k+1}) - \partial \ell(x^k)$</p>
+<p>update Y with $y^k = \partial \ell(x^{k+1}) - \partial \ell(x^k)$</p></blockquote>
 
 <p>end for</p></blockquote>
 

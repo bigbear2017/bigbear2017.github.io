@@ -70,13 +70,13 @@
 
 <blockquote><p>for j = 1 to M</p>
 
-<ul>
-<li><p>$ r_{ji} = ( y_i - G_{j-1}(x_i) ) $ //r_j should be a vector, size of N</p></li>
-<li><p>fit $g_j(x)$ to $r_j$</p></li>
-<li><p>$\alpha_j = \arg \min_{\alpha} \sum_{i = 1}^n L( y_i, G_{j-1} ( x_i ) + \alpha * g_j(x_i) )  $</p></li>
-<li><p>$G_j(x) = G_{j-1}(x) + \alpha_j g_j(x) $</p></li>
-</ul>
-</blockquote>
+<blockquote><p>$ r_{ji} = ( y_i - G_{j-1}(x_i) ) $ //r_j should be a vector, size of N</p>
+
+<p>fit $g_j(x)$ to $r_j$</p>
+
+<p>$\alpha_j = \arg \min_{\alpha} \sum_{i = 1}^n L( y_i, G_{j-1} ( x_i ) + \alpha * g_j(x_i) )  $</p>
+
+<p>$G_j(x) = G_{j-1}(x) + \alpha_j g_j(x) $</p></blockquote></blockquote>
 
 <h5>2. 使用Gradient</h5>
 
@@ -125,13 +125,13 @@ y - G(x)                 &amp; \textrm{for} |y - G(x)| \le \delta, \\\
 
 <p>for j = 1 to M</p>
 
-<p> &lsquo;  &rsquo;  $ r_{ji} = -\frac{\partial L} {\partial G_{j-1}(x_i)} $ //$r_j$ should be a vector, size of N</p>
+<blockquote><p>$ r_{ji} = -\frac{\partial L} {\partial G_{j-1}(x_i)} $ //$r_j$ should be a vector, size of N</p>
 
-<p> &lsquo;  &rsquo;  fit $g_j(x)$ to $r_j$</p>
+<p>fit $g_j(x)$ to $r_j$</p>
 
-<p> &lsquo;  &rsquo;  $\alpha_j = \arg \min_{\alpha} \sum_{i = 1}^n L( y_i, G_{j-1} ( x_i ) + \alpha * g_j(x_i) )  $</p>
+<p>$\alpha_j = \arg \min_{\alpha} \sum_{i = 1}^n L( y_i, G_{j-1} ( x_i ) + \alpha * g_j(x_i) )  $</p>
 
-<p> &lsquo;  &rsquo;  $G_j(x) = G_{j-1}(x) + \alpha_j g_j(x) $</p></blockquote>
+<p>$G_j(x) = G_{j-1}(x) + \alpha_j g_j(x) $</p></blockquote></blockquote>
 
 <p>初始化learner function $F_0$为常数
 计算negative gradient

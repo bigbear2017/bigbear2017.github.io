@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 机器学习 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/ji-qi-xue-xi/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-06-07T00:21:03+08:00</updated>
+  <updated>2016-06-07T13:40:03+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -88,19 +88,19 @@ chose initial point $x<sup>0</sup>$</p>
 
 <p>for k = 0 to maxIters do</p>
 
-<p>&mdash;Compute $v^k = - \partial f(x)$</p>
+<blockquote><p>Compute $v^k = - \partial f(x)$</p>
 
-<p>&mdash;Compute $d^k = H_k v^k$ using S and Y</p>
+<p>Compute $d^k = H_k v^k$ using S and Y</p>
 
-<p>&mdash;$p^k = \pi ( d^k, v^k )$</p>
+<p>$p^k = \pi ( d^k, v^k )$</p>
 
-<p>&mdash;Find $x^{k+1}$ with constraned line search</p>
+<p>Find $x^{k+1}$ with constraned line search</p>
 
-<p>&mdash;If termination satisfied return $x^{k+1}$ end if</p>
+<p>If termination satisfied return $x^{k+1}$ end if</p>
 
-<p>&mdash;update S with $s^k = x^{k+1} - x^{k}$</p>
+<p>update S with $s^k = x^{k+1} - x^{k}$</p>
 
-<p>&mdash;update Y with $y^k = \partial \ell(x^{k+1}) - \partial \ell(x^k)$</p>
+<p>update Y with $y^k = \partial \ell(x^{k+1}) - \partial \ell(x^k)$</p></blockquote>
 
 <p>end for</p></blockquote>
 
@@ -142,13 +142,13 @@ chose initial point $x<sup>0</sup>$</p>
 
 <blockquote><p>for j = 1 to M</p>
 
-<ul>
-<li><p>$ r_{ji} = ( y_i - G_{j-1}(x_i) ) $ //r_j should be a vector, size of N</p></li>
-<li><p>fit $g_j(x)$ to $r_j$</p></li>
-<li><p>$\alpha_j = \arg \min_{\alpha} \sum_{i = 1}^n L( y_i, G_{j-1} ( x_i ) + \alpha * g_j(x_i) )  $</p></li>
-<li><p>$G_j(x) = G_{j-1}(x) + \alpha_j g_j(x) $</p></li>
-</ul>
-</blockquote>
+<blockquote><p>$ r_{ji} = ( y_i - G_{j-1}(x_i) ) $ //r_j should be a vector, size of N</p>
+
+<p>fit $g_j(x)$ to $r_j$</p>
+
+<p>$\alpha_j = \arg \min_{\alpha} \sum_{i = 1}^n L( y_i, G_{j-1} ( x_i ) + \alpha * g_j(x_i) )  $</p>
+
+<p>$G_j(x) = G_{j-1}(x) + \alpha_j g_j(x) $</p></blockquote></blockquote>
 
 <h5>2. 使用Gradient</h5>
 
@@ -197,13 +197,13 @@ y - G(x)                 &amp; \textrm{for} |y - G(x)| \le \delta, \\\
 
 <p>for j = 1 to M</p>
 
-<p> &lsquo;  &rsquo;  $ r_{ji} = -\frac{\partial L} {\partial G_{j-1}(x_i)} $ //$r_j$ should be a vector, size of N</p>
+<blockquote><p>$ r_{ji} = -\frac{\partial L} {\partial G_{j-1}(x_i)} $ //$r_j$ should be a vector, size of N</p>
 
-<p> &lsquo;  &rsquo;  fit $g_j(x)$ to $r_j$</p>
+<p>fit $g_j(x)$ to $r_j$</p>
 
-<p> &lsquo;  &rsquo;  $\alpha_j = \arg \min_{\alpha} \sum_{i = 1}^n L( y_i, G_{j-1} ( x_i ) + \alpha * g_j(x_i) )  $</p>
+<p>$\alpha_j = \arg \min_{\alpha} \sum_{i = 1}^n L( y_i, G_{j-1} ( x_i ) + \alpha * g_j(x_i) )  $</p>
 
-<p> &lsquo;  &rsquo;  $G_j(x) = G_{j-1}(x) + \alpha_j g_j(x) $</p></blockquote>
+<p>$G_j(x) = G_{j-1}(x) + \alpha_j g_j(x) $</p></blockquote></blockquote>
 
 <p>初始化learner function $F_0$为常数
 计算negative gradient
@@ -237,12 +237,14 @@ y - G(x)                 &amp; \textrm{for} |y - G(x)| \le \delta, \\\
 
 <blockquote><ol>
 <li>Initialize  $ \omega_i = \frac{1}{N} $,  i = 1, 2, &hellip; N</li>
-<li>For m = 1 to M:</li>
-<li>(a) Fit a classifier G(x) to training data using weights $\omega_i$</li>
-<li>(b)Compute</li>
-<li>$$ err_m = \frac{\sum_{i=1}^{N} \omega_m I( y_i \ne G_m(x))} {\sum_{i = 1}^{N} \omega_i}  $$</li>
-<li>&copy; Compute $ \alpha_m = \log(\frac{( 1 - err_m)} {err_m} ) $</li>
-<li>(d) Update $\omega_i  = \omega_i \exp(\alpha_m I( y_i \ne G_m(x_i) )$</li>
+<li>For m = 1 to M:
+
+<blockquote><p>Fit a classifier G(x) to training data using weights $\omega_i$</p>
+
+<p>Compute
+$$ err_m = \frac{\sum_{i=1}^{N} \omega_m I( y_i \ne G_m(x))} {\sum_{i = 1}^{N} \omega_i}  $$
+Compute $ \alpha_m = \log(\frac{( 1 - err_m)} {err_m} ) $
+Update $\omega_i  = \omega_i \exp(\alpha_m I( y_i \ne G_m(x_i) )$</p></blockquote></li>
 <li>Output  $ G(x) = sign[ \sum_{m=1}^{M} \alpha_m G_m(x) ] $</li>
 </ol>
 </blockquote>
@@ -269,8 +271,9 @@ err_m =  \frac{1}{1 + \exp^{\alpha}} \\
 <li>为什么每次要更新$\omega_i$ ?
 对于 $\omega_i$ 的更新，我们可以进行这样的解读:
 
-<blockquote><p>if $y_i == G(x_i)$ $\omega_i == \omega_i$
-else $\omega_i = \omega_i * \frac{1- err_m}{err_m}$</p></blockquote></li>
+<blockquote><p>if $y_i == G(x_i)$ $\omega_i == \omega_i$</p>
+
+<p>else $\omega_i = \omega_i * \frac{1- err_m}{err_m}$</p></blockquote></li>
 </ol>
 
 

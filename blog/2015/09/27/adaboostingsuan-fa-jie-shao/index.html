@@ -70,12 +70,14 @@
 
 <blockquote><ol>
 <li>Initialize  $ \omega_i = \frac{1}{N} $,  i = 1, 2, &hellip; N</li>
-<li>For m = 1 to M:</li>
-<li>(a) Fit a classifier G(x) to training data using weights $\omega_i$</li>
-<li>(b)Compute</li>
-<li>$$ err_m = \frac{\sum_{i=1}^{N} \omega_m I( y_i \ne G_m(x))} {\sum_{i = 1}^{N} \omega_i}  $$</li>
-<li>&copy; Compute $ \alpha_m = \log(\frac{( 1 - err_m)} {err_m} ) $</li>
-<li>(d) Update $\omega_i  = \omega_i \exp(\alpha_m I( y_i \ne G_m(x_i) )$</li>
+<li>For m = 1 to M:
+
+<blockquote><p>Fit a classifier G(x) to training data using weights $\omega_i$</p>
+
+<p>Compute
+$$ err_m = \frac{\sum_{i=1}^{N} \omega_m I( y_i \ne G_m(x))} {\sum_{i = 1}^{N} \omega_i}  $$
+Compute $ \alpha_m = \log(\frac{( 1 - err_m)} {err_m} ) $
+Update $\omega_i  = \omega_i \exp(\alpha_m I( y_i \ne G_m(x_i) )$</p></blockquote></li>
 <li>Output  $ G(x) = sign[ \sum_{m=1}^{M} \alpha_m G_m(x) ] $</li>
 </ol>
 </blockquote>
@@ -102,8 +104,9 @@ err_m =  \frac{1}{1 + \exp^{\alpha}} \\
 <li>为什么每次要更新$\omega_i$ ?
 对于 $\omega_i$ 的更新，我们可以进行这样的解读:
 
-<blockquote><p>if $y_i == G(x_i)$ $\omega_i == \omega_i$
-else $\omega_i = \omega_i * \frac{1- err_m}{err_m}$</p></blockquote></li>
+<blockquote><p>if $y_i == G(x_i)$ $\omega_i == \omega_i$</p>
+
+<p>else $\omega_i = \omega_i * \frac{1- err_m}{err_m}$</p></blockquote></li>
 </ol>
 
 

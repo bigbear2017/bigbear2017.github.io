@@ -3,7 +3,7 @@ layout: post
 title: "Calibretion算法介绍"
 date: 2016-06-01 23:59:03 +0800
 comments: true
-categories: 
+categories: 算法应用
 ---
 ##### 版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。
 

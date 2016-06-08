@@ -50,9 +50,9 @@ From this [How To Wrte JavaDoc](http://www.oracle.com/technetwork/articles/java/
 
 插入代码:
 Class Usage: 
-<code> 
+<pre><code> 
  import org.apache.Example
-</code>
+</code></pre>
 ```
 
 ### 参数注释

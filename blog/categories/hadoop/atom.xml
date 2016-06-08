@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: hadoop | To Be Your Salt]]></title>
+  <link href="http://bigbear2017.github.io/blog/categories/hadoop/atom.xml" rel="self"/>
+  <link href="http://bigbear2017.github.io/"/>
+  <updated>2016-06-08T22:58:18+08:00</updated>
+  <id>http://bigbear2017.github.io/</id>
+  <author>
+    <name><![CDATA[Cao Nannan]]></name>
+    <email><![CDATA[sei_michael@126.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Hadoop笔记]]></title>
+    <link href="http://bigbear2017.github.io/blog/2016/06/08/hadoopbi-ji/"/>
+    <updated>2016-06-08T22:52:09+08:00</updated>
+    <id>http://bigbear2017.github.io/blog/2016/06/08/hadoopbi-ji</id>
+    <content type="html"><![CDATA[<h3>1. 关于 Hadoop</h3>
+
+<ol>
+<li>FileSystem.get( conf ) 会得到缓存的filesystem，因为是缓存的filesystem，这个filesystem是不能关闭的。一旦关闭之后，其他的机器有可能也在读文件，关闭以后其他的机器就不能再读了</li>
+<li><p>Hadoop 里面有两个mapreduce的包，一个是hadoop.mapred，一个是hadoop.mapreduce，这两个包不一样的。</p>
+
+<ul>
+<li>org.apache.hadoop.mapred 是老的api，org.apache.hadoop.mapreduce是新的api</li>
+<li>新的API使用context，并允许用户代码与mapreduce系统进行通信，旧的里面是通过OutputCollector和Reporter两个来通信。但在新的里面，所有的一切都是通过context</li>
+</ul>
+</li>
+<li><p>作业控制通过Job而不是JobClient，作业配置通过Configuration而不是JobConf，老的API通过JobConf对通用的Configuration进行扩展，但在新的里面一切都是Configuration</p></li>
+<li><p>Set hadoop heap size before the job running:</p>
+
+<blockquote><pre><code>export HADOOP_HEAPSIZE=4096
+</code></pre></blockquote></li>
+</ol>
+
+
+<h3>2. 关于DistributedCache</h3>
+
+<ol>
+<li>Use distributed cache:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public void addToDistributedCache(Configuration conf, Path path) throws IOException {
+</span><span class='line'>FileSystem fs = FileSystem.get(conf);
+</span><span class='line'>FileStatus fileStatus = fs.getFileStatus(path);&lt;/li&gt;
+</span><span class='line'>&lt;/ol&gt;
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt; if (fileStatus.isDirectory()) {
+</span><span class='line'>   FileStatus[] allStatus = fs.listStatus(path);
+</span><span class='line'>   for (FileStatus status : allStatus) {
+</span><span class='line'>     DistributedCache.addCacheFile(status.getPath().toUri(), conf);
+</span><span class='line'>     LOG.info(&ldquo;add file : &rdquo; + status.getPath().toString());
+</span><span class='line'>   }
+</span><span class='line'> } else {
+</span><span class='line'>   DistributedCache.addCacheFile(path.toUri(), conf);
+</span><span class='line'>   LOG.info(&ldquo;add file: &rdquo; + path.toString());
+</span><span class='line'> }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+2. DistributedCache 无法使用：可能的原因是使用的conf是在new Job</p>
+
+<ol>
+<li>如果distributed cache使用了很多的文件都是part-r-00000这样的文件，可以使用alias这样的办法处理:
+<code>
+job.addCacheFile(new URI(options.getIdf() + "#" + IDF_ALIAS));
+</code></li>
+</ol>
+
+
+<h3>3. 关于Lzo和Lzop</h3>
+
+<ol>
+<li><p>使用lzo压缩格式压缩文件
+<code>
+OutputFormat.setCompressOutput(job, true);
+OutputFormat.setOutputCompressor( job, LzopCodec.class)
+</code></p></li>
+<li><p>LzoCodec 和 LzopCodec的区别
+<code>
+lzo 是一个压缩的lib，可以用来快速的压缩和解压缩，用来map和reduce中间
+lzop是一个文件压缩的方式，和gzip相同，用来输出
+</code></p></li>
+</ol>
+
+
+<h3>4. 关于shuffle error</h3>
+
+<pre><code>job 出现了 org.apache.hadoop.mapreduce.task.reduce.Shuffle$ShuffleError: error in shuffle in fetcher#3, 
+网上有很多调整内存的方法，好像都没用。试了一会，调整reduce的内存，还是没用。最后，调整了reducer 的个数，job跑过。
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

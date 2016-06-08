@@ -4,7 +4,7 @@
   <title><![CDATA[Category: tools | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/tools/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-06-08T22:49:16+08:00</updated>
+  <updated>2016-06-08T22:58:18+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -68,24 +68,27 @@
 <p>分行: <br></p>
 
 <p>插入代码:
-Class Usage:
-<code>
+Class Usage:</p>
+
+<pre><code> 
  import org.apache.Example
-</code>
-```</p>
-
-<h3>参数注释</h3>
-
-<pre><code>@author (classes and interfaces only, required)        
-@version (classes and interfaces only, required.   
-@param (methods and constructors only)        
-@return (methods only)        
-@exception (@throws is a synonym added in Javadoc 1.2)        
-@see  
-@since  
-@serial (or @serialField or @serialData)        
-@deprecated 
 </code></pre>
+
+
+<pre><code>
+### 参数注释
+</code></pre>
+
+<p>@author (classes and interfaces only, required)      <br/>
+@version (classes and interfaces only, required. <br/>
+@param (methods and constructors only)      <br/>
+@return (methods only)      <br/>
+@exception (@throws is a synonym added in Javadoc 1.2)      <br/>
+@see<br/>
+@since<br/>
+@serial (or @serialField or @serialData)      <br/>
+@deprecated
+```</p>
 
 <h3>链接注释 用于@SEE</h3>
 

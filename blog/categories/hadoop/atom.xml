@@ -4,7 +4,7 @@
   <title><![CDATA[Category: hadoop | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/hadoop/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-06-08T22:58:18+08:00</updated>
+  <updated>2016-06-08T23:01:08+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -18,7 +18,9 @@
     <link href="http://bigbear2017.github.io/blog/2016/06/08/hadoopbi-ji/"/>
     <updated>2016-06-08T22:52:09+08:00</updated>
     <id>http://bigbear2017.github.io/blog/2016/06/08/hadoopbi-ji</id>
-    <content type="html"><![CDATA[<h3>1. 关于 Hadoop</h3>
+    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
+
+<h3>1. 关于 Hadoop</h3>
 
 <ol>
 <li>FileSystem.get( conf ) 会得到缓存的filesystem，因为是缓存的filesystem，这个filesystem是不能关闭的。一旦关闭之后，其他的机器有可能也在读文件，关闭以后其他的机器就不能再读了</li>

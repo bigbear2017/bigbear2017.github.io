@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 优化算法 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/you-hua-suan-fa/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-06-08T22:58:18+08:00</updated>
+  <updated>2016-06-08T23:01:08+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -18,7 +18,9 @@
     <link href="http://bigbear2017.github.io/blog/2016/06/07/owl-qnsuan-fa-jie-shao/"/>
     <updated>2016-06-07T00:08:56+08:00</updated>
     <id>http://bigbear2017.github.io/blog/2016/06/07/owl-qnsuan-fa-jie-shao</id>
-    <content type="html"><![CDATA[<h3>算法引言</h3>
+    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
+
+<h3>算法引言</h3>
 
 <p>我们之前介绍了Logistic Regression。通常情况下，对LR进行正则化，我们都会使用L2 norm，因为求导比较简单。但是L1 norm 相对于L2 norm有2个好处：</p>
 

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 基础算法 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/ji-chu-suan-fa/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-06-07T14:37:40+08:00</updated>
+  <updated>2016-06-08T22:22:07+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -12,6 +12,68 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[BloomFilter算法介绍]]></title>
+    <link href="http://bigbear2017.github.io/blog/2016/06/08/bloom-filtersuan-fa-jie-shao/"/>
+    <updated>2016-06-08T22:16:42+08:00</updated>
+    <id>http://bigbear2017.github.io/blog/2016/06/08/bloom-filtersuan-fa-jie-shao</id>
+    <content type="html"><![CDATA[<h3>算法引言</h3>
+
+<p>问题一：Query 去除
+在处理文字链相关广告的时候，遇到这样一个问题。用户很多的搜索，都是检索不到广告的。对于这一类的用户搜索，基本上来说，是没什么价值的。这样的数据也就可以丢弃了。但是，想确定一个搜索有没有价值，我们要匹配所有的广告，接近千万条。而用户的搜索更是上亿，每一个用户搜索都进行一次匹配。这样的匹配，估计现在多少的机器也搞不定。</p>
+
+<p>问题二：URL是否被爬过
+这与另外一个问题类似。假设我们在做一个爬虫，有1000亿的url地址，我们想确定一下当前的url有没有被爬过。最简单的想法是，我们直接用一个hash set。但是100亿条数据，也就是10G，每条数据hash一次8个byte，但是hashset的利用效率也就是50%，那也就是需要160GB的内存。现在有机器能存下这么多的内存，估计用起来也是很吃力吧。</p>
+
+<h3>算法介绍</h3>
+
+<p>Bloom filter 的想法很简单。每个Bloom Filter有两个参数:</p>
+
+<ol>
+<li>一个是K，表示有多少个hash function。</li>
+<li>另外一个是m，表示bloom filter有多少个bit。</li>
+</ol>
+
+
+<p>Bloom filter的过程很简单，就只有hash和位运算。大致为下面几步:</p>
+
+<ol>
+<li>使用k个hash 函数进行hash</li>
+<li>hash以后再对m取余，得到在filter的位置</li>
+<li>最后对相应的位置置1。</li>
+</ol>
+
+
+<p>这个是处理输入的过程。判断一个输入是不是在bloom filter中，则进行类似的操作：</p>
+
+<ol>
+<li>使用k个hash函数进行hash</li>
+<li>hash以后再对m取余，得到在filter的位置</li>
+<li>看所有的位置是不是都是1，如果是返回true，否则返回false</li>
+</ol>
+
+
+<p>图解如下:</p>
+
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Bloom_filter.svg/649px-Bloom_filter.svg.png" alt="bloomfilter" /></p>
+
+<h3>K 和 m的取值</h3>
+
+<p>在使用bloom filter的时候，最关键的是设置这两个参数。一般来说，false postive的概率小于0.01就可以了。K一般选择3或者4，而m/n一般选择10左右。所以上面，对于url的处理。我们需要100Gb也就是12GB的内存，或者稍微大一点16GB绝对够了。
+具体可以参考曹培教授提供的<a href="http://pages.cs.wisc.edu/~cao/papers/summary-cache/node8.html">概率分布</a></p>
+
+<h3>一些想法</h3>
+
+<p>Bloom Filter作为可以加载到内存使用的filter，在mapreduce中或者其他需要加载到内存的应用中，都很好用，可以对数据进行集中式处理。</p>
+
+<h3>参考资料</h3>
+
+<p>吴军 数学之美</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Bloom_filter">Bloom Filter&ndash;Wikipedia</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[GradientBoosting算法介绍]]></title>
@@ -327,160 +389,6 @@ $$</p>
 <h3>3. 如何求解</h3>
 
 <p>经过上面的变换，我们可以得到一个dual，然后使用 SMO 算法，或者其他算法我们都可以得到解。但是都是比较麻烦的。我们可不可以像其他算法一样，使用最简单的Gradient Descent 来求解呢？如果可以的话，那样会简单很多。(待续)</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Newton Method, BFGS和LBFGS算法介绍]]></title>
-    <link href="http://bigbear2017.github.io/blog/2014/09/12/newton-method/"/>
-    <updated>2014-09-12T21:49:55+08:00</updated>
-    <id>http://bigbear2017.github.io/blog/2014/09/12/newton-method</id>
-    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
-
-<p>本文主要介绍Newton Method，BFGS, LBFGS 算法，最重要的是算法推导的过程，以及这三个算法的比较。</p>
-
-<h2>Newton Method</h2>
-
-<p>假设$y = f(x)$，为了求方程$f(x) = 0$的解，我们可以用下面迭代的方式：</p>
-
-<p>$$ x_{n+1} = x_n - \frac{ f(x_n) } { f^{\prime} (x_n) } $$</p>
-
-<p>比如$ f(x) = x^{2} - 5 $，我们可以这么来求：</p>
-
-<p>$$ x_1 = 5, f(5) = 20, f^{\prime}(5) = 10, x_2 = 5 - 20 / 10 = 3 $$
-$$x_2 = 3, f(3) = 4, f^{\prime}(3) = 6, x_3 = 3 - 4/6 = 7/3 $$
-$$x_3 = 7/3, f(7/3) = 4/9, f^{\prime}(7/3) = 14/3, x_4 = 7/3 - 2/21 = 47/21 $$</p>
-
-<p>这样$ 47/21 $ 已经非常接近5的平方根了。为什么可以这么计算呢？证明如下：
-根据泰勒展开式，$ y = f(x) $ 在 $x_n$处的展开为：</p>
-
-<p>$$ y = f^{\prime}(x_n) ( x_{n+1} - x_n ) + f(x_n) $$</p>
-
-<p>如果$ y = 0 $, 那么可得如下结果：</p>
-
-<p>$$ x_{n+1} = x_n - f(x_n) / f^{\prime}(x_n) $$</p>
-
-<p>在许多机器学习的算法中，我们经常可能碰到的是另外一种形式，比如我们想最大化log likelihood函数。
-这个时候，我们会对函数先求一个导，导数$f^{\prime}(x) = 0$的地方一般就是极值点。因此这个时候，我们想求的是
-$ f^{\prime}(x) = 0 $，而不是$ f(x) = 0 $。如果求$ f^{\prime}(x) = 0 $，则方程的解如下：</p>
-
-<p>$$ x_{n+1} = x_n - \frac{f^{\prime}(x)}{f^{\prime \prime}(x)} $$</p>
-
-<p>但是因为这个方法要求函数的二阶导数，就像在logistic regression中说的一样。求出来的Hessian Matrix实在太大，
-求逆也非常的麻烦。因此就有人想到了更为简单的算法，LBFGS就是其中一个比较好的方法，我们先从BFGS算法说起。</p>
-
-<h2>BFGS</h2>
-
-<p>BFGS算法是由Broyden, Fletcher, Goldfarb 和 Shanno四个人共同提出的。这里我们把他们的名字列出来，纪念一下。:)
-由最简单的Line Search的方法，我们知道对于求方程$ f(x) = 0 $的解，我们可以进行如下迭代：</p>
-
-<p>$$ x_{k+1} = x_k + \alpha_k \rho_k $$</p>
-
-<p>其中 $\alpha_k$ 为步长，$\rho_k$为迭代方向。根据泰勒展开，我们可以把$f(x)$写成下面格式：</p>
-
-<p>$$ f(x_{k+1}) = f(x_k) + f^{\prime}(x_k)(x_{k+1} - x_k) + \frac{1}{2} (x_{k+1} - x_k)^{T} f^{\prime \prime}(x_k) ( x_{k+1} - x_k ) $$</p>
-
-<p>上面的函数，也可以写成$ \rho $ 的函数，如下：</p>
-
-<p>$$ m_k(\rho) = f_k + f^{\prime T}_k \rho + \frac{1}{2} \rho^{T} B_k \rho $$</p>
-
-<p>其中$f_k$为$f(x_k)$, $f^{\prime}_k$为$f(x)$在$x_k$处的导数。根据上面的式子，当$\rho = 0$的时候，</p>
-
-<p>$$ m_k(0) =  f_k, m^{\prime}_k (0) = f^{\prime T}_k $$</p>
-
-<p>因此在任何一点$x_k$，$f(x_k)$都可以写成$m_k$的形式，方程的曲线也应该是相同的。根据上面的定义，我们可以得到方程在
-$x_{k+1}$处，$m_{k+1}$的表达式为:</p>
-
-<p>$$ m_{k+1}(\rho) = f_{k+1} + f^{\prime T}_{k+1} \rho + \frac{1}{2} \rho^{T} B_{k+1} \rho $$</p>
-
-<p>根据这个表达式，$m_{k+1}$ 这个表达式在$x_k$处的导数为:</p>
-
-<p>$$ f^{\prime}(x_k) = m^{\prime}_{k+1}(-\alpha_k \rho_k) = f^{\prime T}_{k+1} - \alpha_k B_{k+1} \rho_k $$</p>
-
-<p>所以得到：</p>
-
-<p>$$ B_{k+1} \alpha_k \rho_k = f^{\prime}_{k+1} - f^{\prime}_k $$</p>
-
-<p>为了简化，定义如下:</p>
-
-<p>$$ s_k = x_{k+1} - x_k = \alpha_k \rho_k, y_{k} = f^{\prime}_{k+1} - f^{\prime}_k $$</p>
-
-<p>所以上面的结果可以写成:</p>
-
-<p>$$ B_{k+1} s_k = y_k $$</p>
-
-<p>假设$ H<em>{k+1} $为$B</em>{k+1}$的逆矩阵，那么我们可以得到:</p>
-
-<p>$$ H_{k+1} y_k = s_k $$</p>
-
-<p>利用$H_k$，$H_{k+1}$可以通过下面的方式获得:</p>
-
-<p>$$ \min_H || H - H_{k+1} || $$</p>
-
-<p>subject to $ H = H^{T}, Hy_k = s_k $.这样我们可以得到$ H_{k+1} $的解为：</p>
-
-<p>$$ H_{k+1} = (I - p_k s_k y^{T}_k)H_k(I-p_k y_k s^{T}_k) + p_k s_k s^{T}_k$$</p>
-
-<p>其中$p_k = \frac{1}{y^{T}_k s_k}$.到这里BFGS的解法就算明白了。相对于Newton Method，BFGS方法不用
-计算Hessian Matrix的逆矩阵。但是它仍然要计算一个matrix，所以内存的占用仍然是一样的。具体算法如下：
-<code>
-while || f^{\prime}_k|| &gt; \epsilon
-          compute search direction
-                  p_k = -H_k f^{\prime}_k
-          x_{k+1} = x_k + \alpha_k p_k where \alpha_k is computed from a line search
-              procedure to satisfy the Wolfe conditions.
-          Define s_k = x_{k+1} - x_k and y_k = f^{\prime}_{k+1} - f^{\prime}_k
-          Compute H_{k+1} with above formula.
-          k = k + 1
-end( while )
-</code></p>
-
-<h3>LBFGS</h3>
-
-<p>根据上面的推导，BFGS算法可以写成下面的格式:</p>
-
-<p>$$ x_{k+1} = x_{k} - \alpha_k H_k f^{\prime}_k(x) $$</p>
-
-<p>其中$\alpha_k$为步长，$H_k$可以写成下面的格式:</p>
-
-<p>$$ H_{k+1} = V^{T}_k H_{k} V_k + p_k s_k s^{T}_k $$</p>
-
-<p>其中$p_k = \frac{1}{y^{T}_k s_k}$, $V_k = I - p_k y_k s^{T}_k $, and $s_k = x_{k+1} - x_k$,$y_k = f^{\prime}_{k+1} - f^{\prime}_{k}$.</p>
-
-<p>由于计算$H_{k+1}$相当的麻烦，我们可以存储$m$个最近的$y_i, s_i$，然后来近似当前的$H_{k+1}$. 根据$H_{k+1}$的定义，我们不难发现这是一个递归的定义。在所有计算的过程中，其实就只有$H_0$这么一个矩阵，其他的全部是向量。如果我们使用一个对角矩阵来近似$H_0$，那么所有的计算都是可以用向量来表示。这个也是为什么它叫limited memory BFGS。
-<code>
-calculate the new direction \rho_k
-q = f^{\prime}(x_k)
-for i = k-1 ... k-m
-  \alpha_i = p_i s^T_i q
-  q = q - \alpha_i y_i
-end for
-r = H_0 q
-for i = k-m ... k-1
-  \beta = p_i y^T_i r
-  r = r + s_i(\alpha_i - \beta)
-end for
-return r which is H_{k}*f^{\prime}_k
-</code></p>
-
-<h2>L-BFGS algorithm</h2>
-
-<pre><code>choose starting point x_0, integer m &gt; 0;
-k = 0;
-repeat
-      Choose H_0
-      Compute \rho_k = - H_{k}*f^{\prime}_k
-      Compute x_{k+1} = x+k + \alpha_k \rho_k, where \alpha_k is the step length
-          which statisfy the Wolfe conditions.
-      if k &gt; m
-              Discard the vector pair{ s_{k-m}, y_{k-m} } from storage.
-      Compute and save s_k = x_{k+1} - x_{k}, y = f^{\prime}_{k+1} - f^{\prime}_k
-      k = k+1
-</code></pre>
-
-<p>参考资料
-<a href="http://en.wikipedia.org/wiki/Newton%27s_method">http://en.wikipedia.org/wiki/Newton%27s_method</a>
-Numerical Optimization, Chapter 6, 7.</p>
 ]]></content>
   </entry>
   

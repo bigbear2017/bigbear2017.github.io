@@ -5,6 +5,8 @@ date: 2016-06-08 22:52:09 +0800
 comments: true
 categories: hadoop
 ---
+##### 版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。
+
 ### 1. 关于 Hadoop
 1. FileSystem.get( conf ) 会得到缓存的filesystem，因为是缓存的filesystem，这个filesystem是不能关闭的。一旦关闭之后，其他的机器有可能也在读文件，关闭以后其他的机器就不能再读了
 2. Hadoop 里面有两个mapreduce的包，一个是hadoop.mapred，一个是hadoop.mapreduce，这两个包不一样的。

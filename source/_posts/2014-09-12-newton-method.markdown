@@ -3,7 +3,7 @@ layout: post
 title: "Newton Method, BFGS和LBFGS算法介绍"
 date: 2014-09-12 21:49:55 +0800
 comments: true
-categories: 机器学习 基础算法
+categories: 机器学习 优化算法
 ---
 ##### 版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。
 

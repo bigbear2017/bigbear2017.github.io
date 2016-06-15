@@ -92,17 +92,22 @@ $$ H\_{k+1} = (I - p_k s_k y^{T}_k)H_k(I-p_k y_k s^{T}\_k) + p_k s_k s^{T}\_k$$
 
 其中$p_k = \frac{1}{y^{T}_k s_k}$.到这里BFGS的解法就算明白了。相对于Newton Method，BFGS方法不用
 计算Hessian Matrix的逆矩阵。但是它仍然要计算一个matrix，所以内存的占用仍然是一样的。具体算法如下：
-```
-while || f^{\prime}_k|| > \epsilon
-          compute search direction
-                  p_k = -H_k f^{\prime}_k
-          x_{k+1} = x_k + \alpha_k p_k where \alpha_k is computed from a line search
-              procedure to satisfy the Wolfe conditions.
-          Define s_k = x_{k+1} - x_k and y_k = f^{\prime}_{k+1} - f^{\prime}_k
-          Compute H_{k+1} with above formula.
-          k = k + 1
-end( while )
-```
+> while $|| f^{\prime}_k||$ > $\epsilon$
+>> compute search direction
+
+>> $ p_k = -H_k f^{\prime}_k $
+
+>> $ x_{k+1} = x_k + \alpha_k p_k $ where $\alpha_k$ is computed from a line search
+
+>> procedure to satisfy the Wolfe conditions.
+
+>> Define $ s_k = x\_{k+1} - x_k $ and $ y_k = f^{\prime}\_{k+1} - f^{\prime}_k $
+
+>> Compute $H_{k+1}$ with above formula.
+
+> $k = k + 1$
+
+> end( while )
 
 ### LBFGS
 根据上面的推导，BFGS算法可以写成下面的格式:
@@ -116,35 +121,52 @@ $$ H\_{k+1} = V^{T}\_k H\_{k} V_k + p_k s_k s^{T}\_k $$
 其中$p\_k = \frac{1}{y^{T}\_k s_k}$, $V_k = I - p_k y_k s^{T}\_k $, and $s_k = x\_{k+1} - x_k$,$y_k = f^{\prime}\_{k+1} - f^{\prime}\_{k}$.
 
 由于计算$H\_{k+1}$相当的麻烦，我们可以存储$m$个最近的$y_i, s_i$，然后来近似当前的$H\_{k+1}$. 根据$H\_{k+1}$的定义，我们不难发现这是一个递归的定义。在所有计算的过程中，其实就只有$H_0$这么一个矩阵，其他的全部是向量。如果我们使用一个对角矩阵来近似$H_0$，那么所有的计算都是可以用向量来表示。这个也是为什么它叫limited memory BFGS。
-```
-calculate the new direction \rho_k
-q = f^{\prime}(x_k)
-for i = k-1 ... k-m
-  \alpha_i = p_i s^T_i q
-  q = q - \alpha_i y_i
-end for
-r = H_0 q
-for i = k-m ... k-1
-  \beta = p_i y^T_i r
-  r = r + s_i(\alpha_i - \beta)
-end for
-return r which is H_{k}*f^{\prime}_k
-```
+> calculate the new direction $\rho_k$
+
+> $q = f^{\prime}(x_k)$
+
+> for $ i = k-1 ... k-m $
+
+>> $\alpha\_i = p\_i s\^T\_i q $
+
+>> $ q = q - \alpha_i y_i $
+
+> end for
+
+> $ r = H_0 q $
+
+> for $ i = k-m ... k-1 $
+
+>>  $\beta = p_i y\^T\_i r $
+
+>>  $ r = r + s_i(\alpha_i - \beta) $
+
+> end for
+
+> return r which is $ H\_{k}*f\^{\prime}\_k $
 
 ## L-BFGS algorithm
-```
-choose starting point x_0, integer m > 0;
-k = 0;
-repeat
-      Choose H_0
-      Compute \rho_k = - H_{k}*f^{\prime}_k
-      Compute x_{k+1} = x+k + \alpha_k \rho_k, where \alpha_k is the step length
-          which statisfy the Wolfe conditions.
-      if k > m
-              Discard the vector pair{ s_{k-m}, y_{k-m} } from storage.
-      Compute and save s_k = x_{k+1} - x_{k}, y = f^{\prime}_{k+1} - f^{\prime}_k
-      k = k+1
-```
-参考资料
+
+> choose starting point $x_0$, integer $m > 0$;
+
+> k = 0;
+
+> repeat
+
+>> Choose $H_0$
+
+>> Compute $\rho_k = - H\_{k}*f\^{\prime}\_k$
+
+>> Compute $ x_{k+1} = x_k + \alpha_k \rho_k$, where $\alpha_k$ is the step length which statisfy the Wolfe conditions.
+
+>> if $k > m$, Discard the vector pair $\{ s\_{k-m}, y\_{k-m} \}$ from storage.
+
+>> Compute and save $s_k = x\_{k+1} - x\_{k}, y = f\^{\prime}\_{k+1} - f\^{\prime}\_k$
+
+>> k = k+1
+
+### 参考资料
+
 http://en.wikipedia.org/wiki/Newton%27s_method
+
 Numerical Optimization, Chapter 6, 7.

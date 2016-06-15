@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 算法应用 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/suan-fa-ying-yong/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-06-15T11:00:11+08:00</updated>
+  <updated>2016-06-15T20:33:59+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -81,6 +81,104 @@ def  mergeList( record R, recordList L ) :
 <p>如下图:
 <img src="http://7xv0xu.com1.z0.glb.clouddn.com/copc-2.png" alt="copc2" />
 从上图，我们可以看到，整个曲线都在1附近。</p>
+
+<h3>代码实现</h3>
+
+<pre><code>package com.skywalker.linear;
+
+import com.google.common.collect.Lists;
+import com.skywalker.utils.Sorter;
+import com.skywalker.utils.Tuple;
+
+import java.util.List;
+import java.util.Stack;
+
+/**
+ * This class implements the PAVA algorithm.
+ * @author caonn@mediav.com
+ * @version 16/6/12.
+ */
+public class IsotonicRegression {
+  private Stack&lt;Record&gt; records = new Stack&lt;Record&gt;();
+
+  /**
+   * This function will fit the data points according to pava algorithm.
+   * @param tuples the input points, tuple.first is index, tuple.second is value
+   */
+  public  void fit (List&lt;Tuple&lt;Double, Double&gt;&gt; tuples) {
+    Sorter.sortTupleList(tuples);
+    for( Tuple&lt;Double, Double&gt; t : tuples) {
+      Record record = new Record( t.first(), t.first(), t.second(), 1);
+      merge(record);
+    }
+  }
+
+  /**
+   * Merge record to record list.
+   * @param record record to be merged into records.
+   */
+  private void merge(Record record) {
+    if( records.size() == 0 ) {
+      records.add(record);
+      return;
+    }
+    Record lastRecord = records.peek();
+    if( lastRecord.value &lt; record.value ) {
+      records.add(record);
+    } else {
+      records.pop();
+      int newNumber = record.number + lastRecord.number;
+      Double newValue = ( record.number * record.value + lastRecord.number * lastRecord.value ) / newNumber;
+      Record newRecord = new Record(lastRecord.lowIndex, record.highIndex, newValue, newNumber);
+      merge(newRecord);
+    }
+  }
+
+  public void printRecords() {
+    for (Record record : records) {
+      System.out.println(record.toString());
+    }
+  }
+
+  public List&lt;Double&gt; predict(List&lt;Double&gt; indices) {
+    List&lt;Double&gt; result = Lists.newArrayList();
+    for( Double index : indices) {
+      result.add(predict(index));
+    }
+    return result;
+  }
+
+  public double predict( double index ) {
+    Record first = records.firstElement();
+    if( index &lt;= first.lowIndex ) return first.value;
+
+    for(Record r : records) {
+      if( index &gt; r.lowIndex &amp;&amp; index &lt;= r.highIndex ) {
+        return r.value;
+      }
+    }
+
+    Record last = records.lastElement();
+    return last.value;
+  }
+}
+
+class Record {
+  public final double lowIndex;
+  public final double highIndex;
+  public final double value;
+  public final int number;
+  public Record(double lowIndex, double highIndex, double value, int number) {
+    this.lowIndex = lowIndex;
+    this.highIndex = highIndex;
+    this.value = value;
+    this.number = number;
+  }
+  public String toString() {
+    return String.valueOf(lowIndex) + " " + String.valueOf(highIndex) + " " + String.valueOf(value) + " " + String.valueOf(number);
+  }
+}
+</code></pre>
 ]]></content>
   </entry>
   

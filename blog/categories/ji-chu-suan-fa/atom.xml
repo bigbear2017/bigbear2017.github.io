@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 基础算法 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/ji-chu-suan-fa/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-06-15T11:00:11+08:00</updated>
+  <updated>2016-06-15T20:33:59+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -18,7 +18,9 @@
     <link href="http://bigbear2017.github.io/blog/2016/06/08/bloom-filtersuan-fa-jie-shao/"/>
     <updated>2016-06-08T22:16:42+08:00</updated>
     <id>http://bigbear2017.github.io/blog/2016/06/08/bloom-filtersuan-fa-jie-shao</id>
-    <content type="html"><![CDATA[<h3>算法引言</h3>
+    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
+
+<h3>算法引言</h3>
 
 <p>问题一：Query 去除
 在处理文字链相关广告的时候，遇到这样一个问题。用户很多的搜索，都是检索不到广告的。对于这一类的用户搜索，基本上来说，是没什么价值的。这样的数据也就可以丢弃了。但是，想确定一个搜索有没有价值，我们要匹配所有的广告，接近千万条。而用户的搜索更是上亿，每一个用户搜索都进行一次匹配。这样的匹配，估计现在多少的机器也搞不定。</p>

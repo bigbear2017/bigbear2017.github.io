@@ -132,6 +132,198 @@
 <p>如下图:
 <img src="http://7xv0xu.com1.z0.glb.clouddn.com/copc-2.png" alt="copc2" />
 从上图，我们可以看到，整个曲线都在1附近。</p>
+
+<h3>代码实现</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>package com.skywalker.linear;
+</span><span class='line'>
+</span><span class='line'>import com.google.common.collect.Lists;
+</span><span class='line'>import com.skywalker.utils.Sorter;
+</span><span class='line'>import com.skywalker.utils.Tuple;
+</span><span class='line'>
+</span><span class='line'>import java.util.List;
+</span><span class='line'>import java.util.Stack;
+</span><span class='line'>
+</span><span class='line'>/**
+</span><span class='line'> * This class implements the PAVA algorithm.
+</span><span class='line'> * @author caonn@mediav.com
+</span><span class='line'> * @version 16/6/12.
+</span><span class='line'> */
+</span><span class='line'>public class IsotonicRegression {
+</span><span class='line'>  private Stack&lt;Record&gt; records = new Stack&lt;Record&gt;();
+</span><span class='line'>
+</span><span class='line'>  /**
+</span><span class='line'>   * This function will fit the data points according to pava algorithm.
+</span><span class='line'>   * @param tuples the input points, tuple.first is index, tuple.second is value
+</span><span class='line'>   */
+</span><span class='line'>  public  void fit (List&lt;Tuple&lt;Double, Double&gt;&gt; tuples) {
+</span><span class='line'>    Sorter.sortTupleList(tuples);
+</span><span class='line'>    for( Tuple&lt;Double, Double&gt; t : tuples) {
+</span><span class='line'>      Record record = new Record( t.first(), t.first(), t.second(), 1);
+</span><span class='line'>      merge(record);
+</span><span class='line'>    }
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  /**
+</span><span class='line'>   * Merge record to record list.
+</span><span class='line'>   * @param record record to be merged into records.
+</span><span class='line'>   */
+</span><span class='line'>  private void merge(Record record) {
+</span><span class='line'>    if( records.size() == 0 ) {
+</span><span class='line'>      records.add(record);
+</span><span class='line'>      return;
+</span><span class='line'>    }
+</span><span class='line'>    Record lastRecord = records.peek();
+</span><span class='line'>    if( lastRecord.value &lt; record.value ) {
+</span><span class='line'>      records.add(record);
+</span><span class='line'>    } else {
+</span><span class='line'>      records.pop();
+</span><span class='line'>      int newNumber = record.number + lastRecord.number;
+</span><span class='line'>      Double newValue = ( record.number * record.value + lastRecord.number * lastRecord.value ) / newNumber;
+</span><span class='line'>      Record newRecord = new Record(lastRecord.lowIndex, record.highIndex, newValue, newNumber);
+</span><span class='line'>      merge(newRecord);
+</span><span class='line'>    }
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  public void printRecords() {
+</span><span class='line'>    for (Record record : records) {
+</span><span class='line'>      System.out.println(record.toString());
+</span><span class='line'>    }
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  public List&lt;Double&gt; predict(List&lt;Double&gt; indices) {
+</span><span class='line'>    List&lt;Double&gt; result = Lists.newArrayList();
+</span><span class='line'>    for( Double index : indices) {
+</span><span class='line'>      result.add(predict(index));
+</span><span class='line'>    }
+</span><span class='line'>    return result;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  public double predict( double index ) {
+</span><span class='line'>    Record first = records.firstElement();
+</span><span class='line'>    if( index &lt;= first.lowIndex ) return first.value;
+</span><span class='line'>
+</span><span class='line'>    for(Record r : records) {
+</span><span class='line'>      if( index &gt; r.lowIndex && index &lt;= r.highIndex ) {
+</span><span class='line'>        return r.value;
+</span><span class='line'>      }
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    Record last = records.lastElement();
+</span><span class='line'>    return last.value;
+</span><span class='line'>  }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>class Record {
+</span><span class='line'>  public final double lowIndex;
+</span><span class='line'>  public final double highIndex;
+</span><span class='line'>  public final double value;
+</span><span class='line'>  public final int number;
+</span><span class='line'>  public Record(double lowIndex, double highIndex, double value, int number) {
+</span><span class='line'>    this.lowIndex = lowIndex;
+</span><span class='line'>    this.highIndex = highIndex;
+</span><span class='line'>    this.value = value;
+</span><span class='line'>    this.number = number;
+</span><span class='line'>  }
+</span><span class='line'>  public String toString() {
+</span><span class='line'>    return String.valueOf(lowIndex) + " " + String.valueOf(highIndex) + " " + String.valueOf(value) + " " + String.valueOf(number);
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
 </div>
 
 

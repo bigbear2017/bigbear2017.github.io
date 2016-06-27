@@ -1,0 +1,191 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>DecisionTree算法介绍--附代码实现 | To Be Your Salt</title>
+
+	<meta name="author" content="Cao Nannan"> 
+	
+	<meta name="description" content="我是一个基督徒，喜欢机器学习，Linux, 编程方面的知识。目前从事点击率预估， 文字链匹配广告，以及想关的工作。 生活中，我喜欢上帝，喜欢耶稣基督，也喜欢读圣经。"> <meta name="keywords" content="">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="To Be Your Salt" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" rel="stylesheet" type="text/css">
+	
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	
+</head>
+
+
+
+<body>
+	<header id="header"><div class="inner">
+  <ul class="navigation">
+    <li><a href="/"><h1>To Be Your Salt</h1></a></li>
+    <li><a href="/" class="is-selected">Blog</a></li>
+    <li><a href="http://github.com/bigbear2017" target="blank">Github</a></li>
+  </ul>
+</div>
+</header>
+
+	<div id="content" class="inner"><article class="post">
+	<h2 class="title">DecisionTree算法介绍--附代码实现</h2>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+
+<time datetime="2016-06-27T23:16:03+08:00" pubdate data-updated="true">Jun 27th, 2016</time></div>
+	</div>
+	<div class="entry-content"><h2>算法介绍</h2>
+
+<p>决策树作为一种简单的算法，用途还是很广泛的。不仅仅这样，他还能够成为其他算法的基础。比如Random Forest，GBDT, AdaBoosting，等等。在实现上，也是非常的简单，训练的速度也是非常的快。先让我们直观上来感受一下，什么是决策树：</p>
+
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/c/c6/Manual_decision_tree.jpg" alt="decision tree" /></p>
+
+<h2>模型训练</h2>
+
+<h4>Regression Trees</h4>
+
+<p>从上面，我们知道一棵决策树，是由不同的节点构成的。从上到下，样本被不断地分到不同节点中去，一直到叶子节点。最终叶子上的节点，决定了这个叶子节点的预测值或者预测标签是什么。所以具体的过程如下：</p>
+
+<ol>
+<li>假设对于任意的分割变量 $j$ 和分割值$v$， 输入$X$可以被分成：</li>
+</ol>
+
+
+<p>$$ R_1(j,v)  = \{ X | X_j &lt; v \} \text{ and } R_2(j , v) = \{ X | X_j > v \} $$</p>
+
+<ol>
+<li>j，v可以利用下面的方式确定：</li>
+</ol>
+
+
+<p>$$\min_{j,v} [ \sum_{x_i \in R_1} ( y_i - c_1)^2 + \sum_{x_i \in R_2} ( y_i - c_2)^2 ] $$</p>
+
+<p>其中: $ c_1 = avg( y_i | x_i \in R_1) $, $c_2 = avg(y_i | x_i \in R2) $</p>
+
+<h4>伪代码</h4>
+
+<p>决策树的想法很简单，就是利用特征构成一颗树，树的左边是子树或者类别，每个节点就是决策点。那问题来了，如何找到每个决策点？稍微想一下的话，可能不难明白：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>while height &lt; MaxHeight and currentLevel has Nodes to split
+</span><span class='line'>  for each Node in current level : 
+</span><span class='line'>    for each feature and possible split in current node:
+</span><span class='line'>        find the best split s;
+</span><span class='line'>        split the node n according to s;
+</span><span class='line'>        if the left node or right node can not be split:
+</span><span class='line'>           continue
+</span><span class='line'>       split current Node into Left and Right
+</span><span class='line'>       put left and right into nextLevelList
+</span><span class='line'>  currentLevel = nextLevel
+</span><span class='line'>  height = height + 1</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Classfication Trees</h4>
+
+<p>分类树主要是计算criterion的时候，有些差别。其他的总体上，也没什么变化。</p>
+
+<p>Missclassification Error: $ \sum_{k=1}^K ( 1- p_{mk} ) $</p>
+
+<p>Gini Index: $\sum_{k=1}^K p_{mk}( 1- p_{mk} )$</p>
+
+<p>Cross-entropy: $\sum_{k=1}^K p_{mk} \log p_{mk}$</p>
+
+<h2>算法实现</h2>
+
+<p>这些天没有更新blog，就自己实现了一个简单的decision tree。它真的很简单，什么都没有。没有剪枝，没有优化地选feature。10w的samples，100维的数据20秒左右可以训练好。还有很多可以优化的地方。</p>
+
+<p>code repository: <a href="https://github.com/bigbear2017/skywalker">skywalker</a></p>
+</div>
+
+
+<!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="/blog/2016/06/27/decisiontreesuan-fa-jie-shao" data-title="DecisionTree算法介绍--附代码实现" data-url="http://bigbear2017.github.io/blog/2016/06/27/decisiontreesuan-fa-jie-shao/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    var duoshuoQuery = {short_name:"bigbear2017"};
+    (function() {
+
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+     })();
+ </script>
+ <!-- 多说公共JS代码 end -->
+
+
+<div class="sharing">
+  
+  
+  
+</div>
+</article>
+</div>
+	<footer id="footer" class="inner"><script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({
+	tex2jax: {
+		inlineMath: [ ['$','$'] ],
+		displayMath: [ ['$$','$$'] ],
+	},
+	processEscapes: true
+});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+<div class="aboutme">
+<hr>
+  <div class="profile">
+    <a href="http://twitter.com/"><img class="icon" src=""></a>
+
+    <h3>Cao Nannan</h3>
+    <p><a href="http://twitter.com/">@</a></p>
+
+    <div class="codes">
+      <h4>Codes</h4>
+      <div class="github"><a href="https://github.com/bigbear2017">github.com/bigbear2017</a></div>
+    </div>
+  </div>
+
+  <div class="float_clear"></div>
+
+</div>
+Copyright &copy; 2016
+ Cao Nannan 
+<br>
+Powered by Octopress.
+
+
+
+</footer>
+	
+
+</body>
+</html>

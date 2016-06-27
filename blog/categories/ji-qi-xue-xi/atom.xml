@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 机器学习 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/ji-qi-xue-xi/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-06-15T21:51:00+08:00</updated>
+  <updated>2016-06-27T23:23:02+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -12,6 +12,74 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[DecisionTree算法介绍--附代码实现]]></title>
+    <link href="http://bigbear2017.github.io/blog/2016/06/27/decisiontreesuan-fa-jie-shao/"/>
+    <updated>2016-06-27T23:16:03+08:00</updated>
+    <id>http://bigbear2017.github.io/blog/2016/06/27/decisiontreesuan-fa-jie-shao</id>
+    <content type="html"><![CDATA[<h2>算法介绍</h2>
+
+<p>决策树作为一种简单的算法，用途还是很广泛的。不仅仅这样，他还能够成为其他算法的基础。比如Random Forest，GBDT, AdaBoosting，等等。在实现上，也是非常的简单，训练的速度也是非常的快。先让我们直观上来感受一下，什么是决策树：</p>
+
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/c/c6/Manual_decision_tree.jpg" alt="decision tree" /></p>
+
+<h2>模型训练</h2>
+
+<h4>Regression Trees</h4>
+
+<p>从上面，我们知道一棵决策树，是由不同的节点构成的。从上到下，样本被不断地分到不同节点中去，一直到叶子节点。最终叶子上的节点，决定了这个叶子节点的预测值或者预测标签是什么。所以具体的过程如下：</p>
+
+<ol>
+<li>假设对于任意的分割变量 $j$ 和分割值$v$， 输入$X$可以被分成：</li>
+</ol>
+
+
+<p>$$ R_1(j,v)  = \{ X | X_j &lt; v \} \text{ and } R_2(j , v) = \{ X | X_j > v \} $$</p>
+
+<ol>
+<li>j，v可以利用下面的方式确定：</li>
+</ol>
+
+
+<p>$$\min_{j,v} [ \sum_{x_i \in R_1} ( y_i - c_1)^2 + \sum_{x_i \in R_2} ( y_i - c_2)^2 ] $$</p>
+
+<p>其中: $ c_1 = avg( y_i | x_i \in R_1) $, $c_2 = avg(y_i | x_i \in R2) $</p>
+
+<h4>伪代码</h4>
+
+<p>决策树的想法很简单，就是利用特征构成一颗树，树的左边是子树或者类别，每个节点就是决策点。那问题来了，如何找到每个决策点？稍微想一下的话，可能不难明白：</p>
+
+<pre><code>while height &lt; MaxHeight and currentLevel has Nodes to split
+  for each Node in current level : 
+    for each feature and possible split in current node:
+        find the best split s;
+        split the node n according to s;
+        if the left node or right node can not be split:
+           continue
+       split current Node into Left and Right
+       put left and right into nextLevelList
+  currentLevel = nextLevel
+  height = height + 1
+</code></pre>
+
+<h4>Classfication Trees</h4>
+
+<p>分类树主要是计算criterion的时候，有些差别。其他的总体上，也没什么变化。</p>
+
+<p>Missclassification Error: $ \sum_{k=1}^K ( 1- p_{mk} ) $</p>
+
+<p>Gini Index: $\sum_{k=1}^K p_{mk}( 1- p_{mk} )$</p>
+
+<p>Cross-entropy: $\sum_{k=1}^K p_{mk} \log p_{mk}$</p>
+
+<h2>算法实现</h2>
+
+<p>这些天没有更新blog，就自己实现了一个简单的decision tree。它真的很简单，什么都没有。没有剪枝，没有优化地选feature。10w的samples，100维的数据20秒左右可以训练好。还有很多可以优化的地方。</p>
+
+<p>code repository: <a href="https://github.com/bigbear2017/skywalker">skywalker</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[OWL-QN算法介绍]]></title>
@@ -321,67 +389,6 @@ err_m =  \frac{1}{1 + \exp^{\alpha}} \\
 <h3>COPC</h3>
 
 <p>这个主要是用来衡量模型是否收敛，就不多说了。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[NeronNetwork算法介绍]]></title>
-    <link href="http://bigbear2017.github.io/blog/2015/06/22/neronnetworksuan-fa-jie-shao/"/>
-    <updated>2015-06-22T20:05:00+08:00</updated>
-    <id>http://bigbear2017.github.io/blog/2015/06/22/neronnetworksuan-fa-jie-shao</id>
-    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
-
-<p>最近深度学习实在太火了，火到各个公司都在搞实验室。但是深度学习的基础，还是从neron network，BP，这样的算法开始。
-就简单回顾一下最简单的NN吧。</p>
-
-<h3>1. 算法介绍</h3>
-
-<p>我们假设只有一层的隐藏层，并且大小为M，输入$X \in R^p$，输出$Y \in R^K$，输出$Y$属于$K$ classes。所以，我们可以得到下面的定义:</p>
-
-<p>$$ \begin{matrix}
-D_m = \rho ( \alpha_m0 + \alpha_m^T X ) , m = 1, 2, &hellip; M \\
-T_k = \beta_k0 + \beta_k^T D, k = 1, 2, &hellip; K \\
-f_k(X) = g_k( T ) , k = 1,2, &hellip; K
-\end{matrix}$$</p>
-
-<p>其中$D = (D_1, D_2, &hellip; , D_M)$, $\rho = \frac{1}{ 1 + \exp^{(-v)} }$是sigmod function, $g_k$可以是identity function，或者是softmax function $\frac{exp^{T_k}}{\sum_{l = 1}^{K} exp^{T_l}}$.</p>
-
-<h3>2. 求解</h3>
-
-<p>训练采用的back propagation的方式，就是先利用参数计算结果，然后根据结果计算梯度，根据梯度再优化参数。
-根据上面的定义，我们可以得到loss function $R(\alpha, \beta)$如下:</p>
-
-<p>$$
-R(\alpha, \beta) = \sum_{k = 1}^K \sum_{n = 1}^N ( y_{ik} - f_k( x_i ) ) ^2
-$$</p>
-
-<p>其中$N$是样本数, $K$是样本的class的数目. 所以对$\alpha, \beta$分别求偏导，我们可以得到:</p>
-
-<p>$$\begin{matrix}
-\frac{\partial R_i}{\partial \beta_{km} } = -2(y_{ik} - f_k( x_i ) ) g^{\prime}(T_k) D_{mi}   \\
-\frac{\partial R_i}{\partial \alpha_{mp}} =  -\sum_{k=1}^{K}2(y_{ik} - f_k( x_i ) ) g^{\prime}(T_k) \beta_{k}\rho^{\prime}(\alpha_m^T x_i) x_{ip}
-\end{matrix}
-$$</p>
-
-<p>根据上面的式子，我们就可以利用gradient descent的方式，来训练模型了.</p>
-
-<p>$$ \begin{matrix}
-\beta^{r+1}_{km} = \beta^{r}_{km}  - \gamma_r \frac{\partial R_i}{\partial \beta_{km} } \\
-\alpha^{r+1}_{mp} = \alpha^{r}_{mp}  - \gamma_r \frac{\partial R_i}{\partial \beta_{mp} }
-\end{matrix}$$</p>
-
-<h3>3. 向量化</h3>
-
-<p>上面的式子，实在看着太繁琐了，我们还是对其进行向量化，可能看着更简单，实现也更方便一些.
-待续</p>
-
-<h3>4. 注意点</h3>
-
-<h4>1. 输入的起始点，不可以全部是零。因为全部是零的话，就永远全部是零，无法训练。也不可以过大，结果会不太好。最好的是随机靠近0的数。</h4>
-
-<h4>2. 隐藏层多一点比较好，可以表达的非线性的能力就越强一点</h4>
-
-<h4>3. 加正则防止过拟合。</h4>
 ]]></content>
   </entry>
   

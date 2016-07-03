@@ -58,15 +58,10 @@ naturalValues.map( x -> x * x).limit(100).forEach( x -> System.out.print(x + " "
 
 ```
 BufferedReader reader = new BufferedReader(new FileReader(new File(fileName)));
-
 String line = reader.readLine();
-
 while( line != null ) {
-
    lineSet.add( line );
-
    line = reader.readLine();
-
 }
 ```
 

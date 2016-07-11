@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: 算法 | To Be Your Salt]]></title>
-  <link href="http://bigbear2017.github.io/blog/categories/suan-fa/atom.xml" rel="self"/>
+  <title><![CDATA[Category: spark | To Be Your Salt]]></title>
+  <link href="http://bigbear2017.github.io/blog/categories/spark/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
   <updated>2016-07-11T21:48:48+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
@@ -74,55 +74,6 @@ JavaRDD&lt;String&gt; lines = sc.textFile(input);
 </code></pre>
 
 <p>这样我们就可以得到每个词的rank。然后根据词的rank，我们找到一组最大rank的连续词组。这样我们就可以提取出句子中的关键词组了，效果看起来还可以。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[关于Downsampling的解释]]></title>
-    <link href="http://bigbear2017.github.io/blog/2014/04/19/guan-yu-downsamplingde-jie-shi/"/>
-    <updated>2014-04-19T21:18:25+08:00</updated>
-    <id>http://bigbear2017.github.io/blog/2014/04/19/guan-yu-downsamplingde-jie-shi</id>
-    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
-
-<h3>为什么进行DownSampling?</h3>
-
-<p>在很多预测的场景，负例样本过多。比如有超过10亿以上。如果这些样本全部都拿来训练，训练的时间比较长，机器可能会撑不住。这个时候，我们不会使用全部的负例，而是使用1/100甚至1/1000的样本去训练。这样训练的结果就不是原本的概率，而是在down sampling之后的概率。这样就我们需要对两个概率进行矫正。</p>
-
-<h3>如何矫正?</h3>
-
-<p>既然使用现在的模型得到的概率, 不是在原来样本上得到的概率，那如何进行矫正呢？假设原本的概率为$P_1$, downsampling之后的概率为$P_2$，正例和负例分别为$P, N$，down sampling使用$1/t$的随机概率进行down sampling. 所以，我们可以得到：</p>
-
-<p>$$ \begin{matrix}
-P_1 = \frac{P}{P+N} \\
-P_2 = \frac{P}{P+ N/t}
-\end{matrix}$$</p>
-
-<p>由上面的式子，我们可以得到:</p>
-
-<p>$$ \begin{matrix}
-P = \frac{P_1} {1- P_1} N \\
-P = \frac{P_2}{1- P_2} \frac{N}{t}
-\end{matrix}$$</p>
-
-<p>所以，我们可以得到:</p>
-
-<p>$$ P_2 = \frac{P_1 t }{P_1 t + 1 - P_1}$$</p>
-
-<p>$$ P_1= \frac{P_2}{t - P_2 t + P_2}$$</p>
-
-<p>假如我们使用的logistic regression，那么: $P_2 = \frac{1}{1 + \exp^{-wx}}$，代入得到:</p>
-
-<p>$$ P_1 = \frac{1}{(1+\exp^{-wx}) t - t + 1}$$</p>
-
-<p>$$ P_1 = \frac{1}{\exp^{-wx}t  + 1}$$</p>
-
-<p>$$ P_1 = \frac{1}{\exp^{-wx+\ln{t}}  + 1}$$</p>
-
-<p>这样，在我们训练的模型，之后再加一个bias，我们就得到了，一个样本在未downsampling之前的同等概率。</p>
-
-<h4>其他应用</h4>
-
-<p>OverSampling方面其实也是类似。这方面还要再思考一下。</p>
 ]]></content>
   </entry>
   

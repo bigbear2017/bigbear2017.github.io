@@ -4,7 +4,7 @@
   <title><![CDATA[Category: tools | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/tools/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-07-03T16:45:14+08:00</updated>
+  <updated>2016-07-11T21:48:48+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -63,15 +63,10 @@ naturalValues.map( x -&gt; x * x).limit(100).forEach( x -&gt; System.out.print(x
 <p>再比如我们要读入一个文件的所有行到一个set里面，如果是之前的话，我们可能需要这样:</p>
 
 <pre><code>BufferedReader reader = new BufferedReader(new FileReader(new File(fileName)));
-
 String line = reader.readLine();
-
 while( line != null ) {
-
    lineSet.add( line );
-
    line = reader.readLine();
-
 }
 </code></pre>
 

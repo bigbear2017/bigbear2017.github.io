@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 算法 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/suan-fa/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-07-11T21:48:48+08:00</updated>
+  <updated>2016-07-11T23:09:12+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -12,70 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[Spark进行Text Rank计算]]></title>
-    <link href="http://bigbear2017.github.io/blog/2016/07/11/sparkjin-xing-text-rankji-suan/"/>
-    <updated>2016-07-11T21:47:08+08:00</updated>
-    <id>http://bigbear2017.github.io/blog/2016/07/11/sparkjin-xing-text-rankji-suan</id>
-    <content type="html"><![CDATA[<p>关于Text Rank具体的算法介绍，可以参考<a href="http://my.oschina.net/letiantian/blog/351154">Text Rank生成关键字和摘要</a>。虽然有很多的python的实现，但是目前还没有spark的实现版本。Python的实现我试着使用了一下，如果在数据量很大的情况下，跑起来会很慢很慢。基本上是很难用的，所以就自己写了一个spark的版本。</p>
-
-<p>我做这个的目的是，为了提取一段文字中的关键词组，而不是提取一段文字中重要的句子。不过我相信这两个方法是非常相似的：1. 提取关键词组，我们就需要计算词之间的关系； 2. 生成摘要，我们就需要句子之间的关系。具体的步骤如下:</p>
-
-<h4>1. 读取数据</h4>
-
-<pre><code>//load input file, It should have the following format:
-//word1 word2 word3 word4 ...
-//word2 word1 word4 word3 ...
-JavaRDD&lt;String&gt; lines = sc.textFile(input);
-</code></pre>
-
-<h4>2. 生成所有相关联的pair</h4>
-
-<pre><code>JavaPairRDD&lt;String, Iterable&lt;String&gt;&gt; links = lines.flatMapToPair(new PairFlatMapFunction&lt;String, String, String&gt;() {
- @Override
- public Iterable&lt;Tuple2&lt;String, String&gt;&gt; call(String line) {
-   String[] parts = line.split("\t");
-   List&lt;Tuple2&lt;String, String&gt;&gt; results = Lists.newArrayList();
-   for (int i = 0; i &lt; parts.length - 1; i++) {
-     for (int j = i + 1; j &lt; parts.length; j++) {
-       results.add(new Tuple2&lt;&gt;(parts[i], parts[j]));
-       results.add(new Tuple2&lt;&gt;(parts[j], parts[i]));
-     }
-   }
-   return results;
- }
-}).distinct().groupByKey().cache();
-</code></pre>
-
-<h4>3. 初始化rank</h4>
-
-<pre><code>JavaPairRDD&lt;String, Double&gt; ranks = links.mapValues((Iterable&lt;String&gt; s1) -&gt; 1.0);
-</code></pre>
-
-<h4>4. 不断迭代</h4>
-
-<pre><code>for (int iter = 0; iter &lt; maxIter; iter++) {
- JavaPairRDD&lt;String, Double&gt; contribs = links.join(ranks).values()
-   .flatMapToPair(new PairFlatMapFunction&lt;Tuple2&lt;Iterable&lt;String&gt;, Double&gt;, String, Double&gt;() {
-     @Override
-     public Iterable&lt;Tuple2&lt;String, Double&gt;&gt; call(Tuple2&lt;Iterable&lt;String&gt;, Double&gt; s) throws Exception {
-       int wordCount = Iterables.size(s._1());
-       List&lt;Tuple2&lt;String, Double&gt;&gt; results = new ArrayList&lt;&gt;();
-       for (String n : s._1()) {
-         results.add(new Tuple2&lt;&gt;(n, s._2() / wordCount));
-       }
-       return results;
-     }
-   });
- ranks = contribs.reduceByKey((Double d1, Double d2) -&gt; d1 + d2).
-   mapValues((Double sum) -&gt; dampingFactor + (1 - dampingFactor) * sum);
-}
-</code></pre>
-
-<p>这样我们就可以得到每个词的rank。然后根据词的rank，我们找到一组最大rank的连续词组。这样我们就可以提取出句子中的关键词组了，效果看起来还可以。</p>
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[关于Downsampling的解释]]></title>

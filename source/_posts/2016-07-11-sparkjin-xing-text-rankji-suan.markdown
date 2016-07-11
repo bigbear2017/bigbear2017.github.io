@@ -3,7 +3,7 @@ layout: post
 title: "Spark进行Text Rank计算"
 date: 2016-07-11 21:47:08 +0800
 comments: true
-categories: spark 算法
+categories: spark
 ---
 
 关于Text Rank具体的算法介绍，可以参考[Text Rank生成关键字和摘要](http://my.oschina.net/letiantian/blog/351154)。虽然有很多的python的实现，但是目前还没有spark的实现版本。Python的实现我试着使用了一下，如果在数据量很大的情况下，跑起来会很慢很慢。基本上是很难用的，所以就自己写了一个spark的版本。

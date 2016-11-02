@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 点击率预估 | To Be Your Salt]]></title>
+  <link href="http://bigbear2017.github.io/blog/categories/dian-ji-lu-yu-gu/atom.xml" rel="self"/>
+  <link href="http://bigbear2017.github.io/"/>
+  <updated>2016-11-02T22:27:48+08:00</updated>
+  <id>http://bigbear2017.github.io/</id>
+  <author>
+    <name><![CDATA[Cao Nannan]]></name>
+    <email><![CDATA[sei_michael@126.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[facebook ctr paper]]></title>
+    <link href="http://bigbear2017.github.io/blog/2016/11/02/facebook-ctr-paper/"/>
+    <updated>2016-11-02T22:17:26+08:00</updated>
+    <id>http://bigbear2017.github.io/blog/2016/11/02/facebook-ctr-paper</id>
+    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
+
+<p>本文主要是介绍了Facebook点击率团队在做优化的过程中所使用的一些策略。相对于Google的那篇CTR paper，本文也是提出一些新的想法，很值得一读。</p>
+
+<h3>一. Evaluation Metrics</h3>
+
+<p>首先文章讨论了，实验的metrics。主要是以下几个metric：</p>
+
+<ul>
+<li><p>Normalized Cross Entropy
+$$NE = \frac{-\frac{1}{N} \sum_{i=1}^{N} (\frac{1+ y_i}{2} \log(p_i) + \frac{1 - y_i}{2} \log( 1- p_i) )}{-(p * \log p + (1-p) * \log ( 1-p ))}$$
+从公式上来看，NE表示的是entropy over average entropy。论文上说，值越小效果就越好。要明白这个公式，我们可以从简单的开始。比如，只有一个点的时候。首先，我们要明白，分子和分母的负号是可以直接去掉的。另外我们也要明白, 去掉负号以后，分子和分母都始终是一个负值。我们假设background 的ctr是一样的。那么，怎么样的预测才是好的预测呢？当有点击的时候，$p_i$是接近于1的。当没有点击的时候$p_i$是接近于0的。也就是说，分子要接近$\log 1$。由于分母是一个负数，分子中越接近$\log 1$，值就越小。所以，值越小，预测的效果越好。</p></li>
+<li><p>Calibration
+这也是我们经常使用的目标，copc。如果这个值也接近1，效果越好。</p></li>
+<li><p>AUC
+在点击率预测里，auc是我们最常用的指标。</p></li>
+</ul>
+
+
+<h3>二. 决策树特征转化</h3>
+
+<p>使用决策树生成新的特征主要有以下几步：</p>
+
+<ol>
+<li>利用GBDT训练，生成决策树</li>
+<li>利用叶子节点，生成新的特征。假设我们有200颗树，一共有1000个叶子节点。每个叶子节点作为一维特征，如果叶子节点为0，该维度就是0。如果叶子节点为1，该节点就是1。</li>
+<li>将生成的新的特征，加入到原来的特征中，训练LR模型。
+具体过程如下图：</li>
+</ol>
+
+
+<p><img src="http://www.bigbear2017.pub/images/facebook-gdbt-lr.png" height="500" width="500" alt="gbdt" /></p>
+
+<h3>三. 在线学习</h3>
+
+<p>其实，这个方法Google在他们的paper里面已经很仔细的讲过了，并没有什么新的地方。主要是使用的mchan的那篇文章FPTR</p>
+
+<h3>四. 实时数据连接</h3>
+
+<ol>
+<li>window size window size过小，就会丢掉点击。window size过大，内存消耗就会变的很大。</li>
+<li>错误处理 如果点击数据流出现问题，那么数据样本的分布就会变了。预估的点击率都会偏低，接近于0。这个时候，我们需要立刻停止线上的模型，并恢复。</li>
+</ol>
+
+
+<h3>五. 参数调整</h3>
+
+<ol>
+<li>决策树的数量： 大概在500左右。我想这个也取决于自己的实际数据。我们使用也就是200个树左右。树的数量如果太大，也会导致线上的计算量变大。</li>
+<li>Boosting Feature Importance：因为在决策树中，每一个节点形成的时候，就要选择一个最好的特征，去最大地降低error。这样通过把这些降低的值加起来，然后排个序，就能知道哪些特征更重要了。不同树之间，相同的特征会合并在一起。通过这样的方法， 可以看到前10个feature占了50%的importance。后300个feature占了不到1%的importance</li>
+<li>历史统计数据。通过上面的boosting feature importance，相对于类别性数据，历史统计数据在模型中的重要性更高。</li>
+</ol>
+
+
+<h3>六. Sampling</h3>
+
+<ol>
+<li>Uniform sampling在50%的时候，基本上NE保持不变，到10%的时候，NE有1%的降低。不过这个也取决于我们的数据量。如果数据量比较小的话，就不用了。大的话，50%应该也没什么问题。</li>
+<li>Negative Down Sampling，使用了不同的值测了一下。大概在0.025的时候，是最好的。为什么，不知道。</li>
+<li>Re-calibration，这个在之前的<a href="http://www.bigbear2017.com/blog/2014/04/19/guan-yu-downsamplingde-jie-shi/">DownSampling</a>文章应该有说了。就不说了。</li>
+</ol>
+
+]]></content>
+  </entry>
+  
+</feed>

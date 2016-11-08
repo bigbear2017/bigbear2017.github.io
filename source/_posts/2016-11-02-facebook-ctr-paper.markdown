@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "facebook ctr paper"
+title: "Facebook CTR Paper"
 date: 2016-11-02 22:17:26 +0800
 comments: true
 categories: 机器学习 点击率预估

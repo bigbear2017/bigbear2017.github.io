@@ -88,14 +88,14 @@
 
 <p>$$ f(x) = b + Wx + U tanh(d + Hx)$$</p>
 
-<p>where $tanh(x) = \frac{e<sup>x</sup> - e^{-x}}{ e<sup>x</sup> + e^{-x} }$ and $\frac{d} {dx} tanh = 1 - tanh<sup>2</sup> x $
-神经网络的输入是$w_t, w<em>{t-1}, &hellip;, w</em>{t-n +1}$，通过mapping matrix C，我们得到每个词相应的vector $C(w_t )$。每一次训练的时候，把输入$w<em>{t-1}, &hellip; , w</em>{t-n+1}$，合并成一个vector，得到我们输入:</p>
+<p>where $tanh(x) = \frac{e^x - e^{-x}}{ e^x + e^{-x} }$ and $\frac{d}{dx} tanh = 1 - tanh^2 x$
+神经网络的输入是$w_t, w_{t-1}, &hellip;, w_{t-n +1}$，通过mapping matrix C，我们得到每个词相应的vector $C(w_t )$。每一次训练的时候，把输入$w_{t-1}, &hellip; , w_{t-n+1}$，合并成一个vector，得到我们输入:</p>
 
-<p>$$ x = ( C(w<em>{t-1}), C(w</em>{t-2}), &hellip;, C(w_{t-n+1}))$$</p>
+<p>$$ x = ( C(w_{t-1}), C(w_{t-2}), &hellip;, C(w_{t-n+1})) $$</p>
 
 <p>而我们输出层$y_i$是由$w_t$映射到 one-hot encoder得到。但是我们的神经网络的结果可能会大于1。所以作者就在最后一层增加了一个soft max.</p>
 
-<p>$$ P( w_t | w<em>{t-1}, &hellip;, w</em>{t-n +1} )  = \frac{\exp^{y<em>{w_t}}}{\sum</em>{i} \exp^{y_i}}$$</p>
+<p>$$ P( w_t | w_{t-1}, &hellip;, w_{t-n +1} )  = \frac{\exp^{y_{w_t}}}{\sum_{i} \exp^{y_i}} $$</p>
 
 <p>这样，我们就可以训练整个神经网络了。</p>
 

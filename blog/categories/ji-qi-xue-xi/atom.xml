@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 机器学习 | To Be Your Salt]]></title>
   <link href="http://bigbear2017.github.io/blog/categories/ji-qi-xue-xi/atom.xml" rel="self"/>
   <link href="http://bigbear2017.github.io/"/>
-  <updated>2016-11-07T21:58:50+08:00</updated>
+  <updated>2016-12-22T08:12:04+08:00</updated>
   <id>http://bigbear2017.github.io/</id>
   <author>
     <name><![CDATA[Cao Nannan]]></name>
@@ -12,6 +12,91 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Word2Vec算法介绍一: A Neural Probabilistic Language Model]]></title>
+    <link href="http://bigbear2017.github.io/blog/2016/11/22/word2vecsuan-fa-jie-shao/"/>
+    <updated>2016-11-22T08:00:10+08:00</updated>
+    <id>http://bigbear2017.github.io/blog/2016/11/22/word2vecsuan-fa-jie-shao</id>
+    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
+
+<h3>引言</h3>
+
+<p>这篇文章基本上是word2vec的开篇之作，后来的工作也都是在这篇文章的基础上，进行的优化。之所以要做word2vec，目的也是比较明显的。
+在没有word2vec之前，如果我们想计算两个句子的相似性，就只能用ngram这种方式来计算相似性。但是这种方式的缺点是，由于词汇量都很大，导致生成的数据向量的维度都很大，并且很稀疏。另外，无法考虑两个词的语义相似性。比如，一只猫正在卧室里走。通过对语料的训练，我们应该可以得到，相似的语句像一只狗正在卧室里走。Word2Vec利用统计语言模型，对上面的问题有了一个初步的解决方法。</p>
+
+<h3>算法结构</h3>
+
+<p>word2vec基本上可以分为这样几步：</p>
+
+<ol>
+<li>对于词典中的每一个词，都关联一个特征向量</li>
+<li>使用特征向量来表示词组序列的概率函数</li>
+<li>利用词组数据来学习 特征向量和概率函数的参数</li>
+</ol>
+
+
+<p>第一步很简单，对于每一个词，我们随机初始化一个特征向量。第二步，这个就是神经网络的设计了。具体的设计，会在下面说明。
+第三步，就是通过数据训练神经网络，得到一个合理的特征向量和神经网络的参数。这个就比较简单了。先是用FeedForward计算输出值，再用BackForward 求导计算。</p>
+
+<p>通过上面的方式，我们可以得到两个部分，一个是被压缩的特征向量。另外一个是训练好的神经网络。我们经常使用的是特征向量，因为通过它，我们会发现一些非常有趣的事情。比如，向量(猫) 和 向量(狗)会比较接近。甚至 向量(皇后) + 向量(男人) 和向量(皇帝)很接近。通过这种把词语转换成向量的方式，我们就可以做很多事情。比如聚类，分类，甚至是文档的匹配等等。</p>
+
+<h3>具体的过程</h3>
+
+<p>训练的过程是为了最大化log-likelihood，定义如下：</p>
+
+<p>$$ L = \frac{1}{T} \sum_t \log f(w_t, w_{t-1}, &hellip;, w_{t-n+1}; \theta ) + R(\theta) $$</p>
+
+<p>论文中给出的具体计算过程如下图：</p>
+
+<p><img src="http://www.bigbear2017.com/images/word2vec-network.png" height="500" width="500" alt="word2vec" /></p>
+
+<p>从上面的图我们可以知道：</p>
+
+<p>$$ f(x) = b + Wx + U tanh(d + Hx)$$</p>
+
+<p>where $tanh(x) = \frac{e<sup>x</sup> - e^{-x}}{ e<sup>x</sup> + e^{-x} }$ and $\frac{d} {dx} tanh = 1 - tanh<sup>2</sup> x $
+神经网络的输入是$w_t, w<em>{t-1}, &hellip;, w</em>{t-n +1}$，通过mapping matrix C，我们得到每个词相应的vector $C(w_t )$。每一次训练的时候，把输入$w<em>{t-1}, &hellip; , w</em>{t-n+1}$，合并成一个vector，得到我们输入:</p>
+
+<p>$$ x = ( C(w<em>{t-1}), C(w</em>{t-2}), &hellip;, C(w_{t-n+1}))$$</p>
+
+<p>而我们输出层$y_i$是由$w_t$映射到 one-hot encoder得到。但是我们的神经网络的结果可能会大于1。所以作者就在最后一层增加了一个soft max.</p>
+
+<p>$$ P( w_t | w<em>{t-1}, &hellip;, w</em>{t-n +1} )  = \frac{\exp^{y<em>{w_t}}}{\sum</em>{i} \exp^{y_i}}$$</p>
+
+<p>这样，我们就可以训练整个神经网络了。</p>
+
+<h4>计算过程：</h4>
+
+<p>主要的forward过程比较简单，可以很容易完成。首先我们可以把$f(x)$ 分成两步：</p>
+
+<p>$$a = d + Hx;$$</p>
+
+<p>$$f(x) = b + Wx + U tanh(a)$$</p>
+
+<p>back propagation需要计算偏导数会有点麻烦，具体如下：</p>
+
+<p>$$ \frac{\partial f(x) }{\partial b} = 1$$</p>
+
+<p>$$ \frac{\partial f(x)}{\partial W} = x$$</p>
+
+<p>$$ \frac{\partial f(x)}{\partial U} = a$$</p>
+
+<p>$$ \frac{\partial f(x)}{\partial d} =  \frac{\partial f(x)}{\partial a}  \frac{\partial a}{\partial d} = U ( 1 - a^2) * 1$$</p>
+
+<p>$$ \frac{\partial f(x)}{\partial H} =  \frac{\partial f(x)}{\partial a}  \frac{\partial a}{\partial H} = U ( 1 - a^2) * x $$</p>
+
+<h4>一个问题：如何训练C</h4>
+
+<p> 我们知道神经网络可以训练参数，这个很容易理解。但是C作为输入的一部分，如何进行训练呢？其实，应该说word2vec有两层的隐含层。C也是通过训练得到。每一次输入的时候，我们可以把C看成是$C = X$，这样，我们就可以对$C$进行求偏导，具体如下：</p>
+
+<p>$$ \frac{\partial f(x)}{\partial C} =  \frac{\partial f(x)}{\partial a}  \frac{\partial a}{\partial X}  \frac{\partial X}{\partial C} = U ( 1 - a^2) * H + W $$</p>
+
+<h3>Word2Vec的意义</h3>
+
+<p>Word2Vec使我们很轻松的将一个词，转化成一个vector，类似于AutoEncoder，Word2Vec使我们可以很容易提取一些相对准确高维的特征。我个人觉得这也是它不同于其他语言模型的地方。像LDA，也可以提取一些高维的特征，但是效果明显不如Word2Vec。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Facebook CTR Paper]]></title>
@@ -349,75 +434,6 @@ y - G(x)                 &amp; \textrm{for} |y - G(x)| \le \delta, \\\
 计算negative gradient
 以negative gradient为目标进行训练得到一个简单的learner
 找到最优的常数得到新的更强的learner</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[AdaBoosting算法介绍]]></title>
-    <link href="http://bigbear2017.github.io/blog/2015/09/27/adaboostingsuan-fa-jie-shao/"/>
-    <updated>2015-09-27T21:41:04+08:00</updated>
-    <id>http://bigbear2017.github.io/blog/2015/09/27/adaboostingsuan-fa-jie-shao</id>
-    <content type="html"><![CDATA[<h5>版权声明：本文所有内容都是原创，如有转载请注明出处，谢谢。</h5>
-
-<p>Boosting 是一种很有意思的算法。在没有SVM之前，今天就让我们来一同回顾一下这个经典的算法吧。</p>
-
-<h2>1. 模型定义</h2>
-
-<p>假设模型的输入为$X \in R^p$，输出为$ Y \in (-1, 1)$，输入和输出都有N个点。我们手上呢，有一个很简单的classfier，$G(x)$，他实在不怎么样，可能就比随机猜要好一点点。我们如何利用这个简单的分类器，对数据进行很好的分类呢？AdaBoosting就提出一种很好的办法: 将弱的分类器组合起来，然后我们形成一个强的分类器。这个想法很好，但是我们真的可以把分类器组合起来吗？首先怎么把分类器组合起来呢？直接用余数来训练吗？这样组合起来，分类器变的更糟糕，怎么办？AdaBoosting巧妙地利用了每一个分类器的优点，并且组合了起来。结果也是相当地惊人，在它刚刚被提出来的时候，几乎是当时最好的算法。首先，组合分类器的定义如下:</p>
-
-<p>$$ G(x) = sign ( \sum_{i =1 }^{M} \alpha_m G_m(x)) $$</p>
-
-<p>那如何得到每一个弱分类器的权重呢？AdaBoosting 是利用了每个分类器的错误率来进行组合的，每一次用$G(x)$来分类的错误率就定义如下:</p>
-
-<p>$$ E = \frac{1}{N} \sum_{i=1}^{N} I(y_i \ne G(x_i)$$</p>
-
-<h2>2.模型训练</h2>
-
-<p>Algorithm AdaBoost</p>
-
-<blockquote><ol>
-<li>Initialize  $ \omega_i = \frac{1}{N} $,  i = 1, 2, &hellip; N</li>
-<li>For m = 1 to M:
-
-<blockquote><p>Fit a classifier G(x) to training data using weights $\omega_i$</p>
-
-<p>Compute
-$$ err_m = \frac{\sum_{i=1}^{N} \omega_m I( y_i \ne G_m(x))} {\sum_{i = 1}^{N} \omega_i}  $$
-Compute $ \alpha_m = \log(\frac{( 1 - err_m)} {err_m} ) $
-Update $\omega_i  = \omega_i \exp(\alpha_m I( y_i \ne G_m(x_i) )$</p></blockquote></li>
-<li>Output  $ G(x) = sign[ \sum_{m=1}^{M} \alpha_m G_m(x) ] $</li>
-</ol>
-</blockquote>
-
-<h2>3. 算法解读</h2>
-
-<ol>
-<li>为什么 $\alpha_m$定义是 $\log(\frac{( 1 - err_m)} {err_m} )$ ?</li>
-</ol>
-
-
-<p>首先$err_m$的取值范围是$(0, 1)$。如果分类器$G_m(x)$的错误率越高，那么$err_m$就越接近于1, 否则就越接近于$0$。而根据常识来说，如果一个分类器很差劲，错误率越高呢，我们就希望他的权重就越低，越接近于0。而这样的话，就让我们想到了一个很常见的函数sigmod fuction。就让我们来证明这个来历吧。</p>
-
-<p>$$ \begin{matrix}
-err_m =  \frac{1}{1 + \exp^{\alpha}} \\
-=> 1 + \exp^{\alpha} = \frac{1}{err_m} \\
-=> \exp^{\alpha} = \frac{1}{err_m} - 1 \\
-=> \alpha = \log(\frac{( 1 - err_m)} {err_m} )
-\end{matrix} $$</p>
-
-<p>上面并不是logistic function(lf)，而是一个按照y轴对称的lf，因为如果直接用lf的话，err越大，权重也会越大了。</p>
-
-<ol>
-<li>为什么每次要更新$\omega_i$ ?
-对于 $\omega_i$ 的更新，我们可以进行这样的解读:
-
-<blockquote><p>if $y_i == G(x_i)$ $\omega_i == \omega_i$</p>
-
-<p>else $\omega_i = \omega_i * \frac{1- err_m}{err_m}$</p></blockquote></li>
-</ol>
-
-
-<p>对于 $\frac{1- err_m}{err_m}$，我们知道$err_m$越大，值越小。也就是说，错误率越高，我们的就权重越低。这是可以理解的，如果$err_m$很大，说明分类器不好。被这样一个分类器给分错了，那我们可能觉得没关系。但是如果$err_m$很小，说明分类器很好，被一个很好的分类器分错了，说明这个点，我们希望在下次的时候，可以被其他的分类器补充。</p>
 ]]></content>
   </entry>
   

@@ -31,6 +31,7 @@ $$NE = \frac{-\frac{1}{N} \sum_{i=1}^{N} (\frac{1+ y_i}{2} \log(p_i) + \frac{1 -
 具体过程如下图：
 
 ![gbdt](http://www.bigbear2017.com/images/facebook-gdbt-lr.png =500x500)
+
 ### 三. 在线学习
 其实，这个方法Google在他们的paper里面已经很仔细的讲过了，并没有什么新的地方。主要是使用的mchan的那篇文章FPTR
 

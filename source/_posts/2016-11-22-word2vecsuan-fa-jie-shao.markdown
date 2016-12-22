@@ -37,14 +37,14 @@ $$ L = \frac{1}{T} \sum_t \log f(w_t, w\_{t-1}, ..., w\_{t-n+1}; \theta ) + R(\t
 
 $$ f(x) = b + Wx + U tanh(d + Hx)$$
 
-where $tanh(x) = \frac{e^x - e\^{-x}}{ e^x + e\^{-x} }$ and $\frac{d} {dx} tanh = 1 - tanh^2 x $
-神经网络的输入是$w_t, w_{t-1}, ..., w_{t-n +1}$，通过mapping matrix C，我们得到每个词相应的vector $C(w_t )$。每一次训练的时候，把输入$w_{t-1}, ... , w_{t-n+1}$，合并成一个vector，得到我们输入:
+where $tanh(x) = \frac{e\^x - e\^{-x}}{ e\^x + e\^{-x} }$ and $\frac{d}{dx} tanh = 1 - tanh\^2 x$
+神经网络的输入是$w\_t, w\_{t-1}, ..., w\_{t-n +1}$，通过mapping matrix C，我们得到每个词相应的vector $C(w\_t )$。每一次训练的时候，把输入$w\_{t-1}, ... , w\_{t-n+1}$，合并成一个vector，得到我们输入:
 
-$$ x = ( C(w_{t-1}), C(w_{t-2}), ..., C(w_{t-n+1}))$$
+$$ x = ( C(w\_{t-1}), C(w\_{t-2}), ..., C(w\_{t-n+1})) $$
 
 而我们输出层$y_i$是由$w_t$映射到 one-hot encoder得到。但是我们的神经网络的结果可能会大于1。所以作者就在最后一层增加了一个soft max.
 
-$$ P( w_t | w_{t-1}, ..., w_{t-n +1} )  = \frac{\exp^{y_{w_t}}}{\sum_{i} \exp^{y_i}}$$
+$$ P( w\_t | w\_{t-1}, ..., w\_{t-n +1} )  = \frac{\exp\^{y\_{w\_t}}}{\sum\_{i} \exp\^{y_i}} $$
 
 这样，我们就可以训练整个神经网络了。
 
